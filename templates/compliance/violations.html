@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Violations | PackCheck AI
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="container">
+
+        <div class="page-header">
+
+            <span>
+                COMPLIANCE
+            </span>
+
+            <h1>
+                Potential Violations
+            </h1>
+
+            <p>
+                Review detected compliance issues
+                and supporting evidence.
+            </p>
+
+        </div>
+
+
+        <div class="content-card">
+
+            <div class="violation-item">
+
+                <div>
+
+                    <span class="violation-number">
+                        01
+                    </span>
+
+                    <div class="violation-content">
+
+                        <h5>
+                            Missing Declaration
+                        </h5>
+
+                        <p>
+                            A mandatory declaration
+                            requires review.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+
+            <div class="violation-item">
+
+                <div>
+
+                    <span class="violation-number">
+                        02
+                    </span>
+
+                    <div class="violation-content">
+
+                        <h5>
+                            MRP Declaration
+                        </h5>
+
+                        <p>
+                            MRP information requires
+                            validation.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+
+            <div class="violation-item">
+
+                <div>
+
+                    <span class="violation-number">
+                        03
+                    </span>
+
+                    <div class="violation-content">
+
+                        <h5>
+                            Manufacturer Information
+                        </h5>
+
+                        <p>
+                            Manufacturer details require
+                            verification.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="mt-4">
+
+            <a href="/result/"
+               class="btn-secondary-custom">
+
+                ← Back to Result
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

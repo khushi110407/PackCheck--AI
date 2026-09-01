@@ -1,0 +1,22 @@
+from django.urls import path
+from . import views
+
+
+app_name = 'scanner'
+
+
+urlpatterns = [
+
+    path(
+        '',
+        views.upload_product,
+        name='upload'
+    ),
+
+    path(
+        'result/<int:scan_id>/',
+        views.scan_result,
+        name='result'
+    ),
+
+]

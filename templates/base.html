@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PackCheck AI</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="container nav-content">
+
+        <a href="{% url 'dashboard:dashboard' %}" class="logo">
+            ⚖️ PackCheck <span>AI</span>
+        </a>
+
+        <nav>
+            <a href="{% url 'dashboard:dashboard' %}">Home</a>
+            <a href="{% url 'dashboard:dashboard' %}">Dashboard</a>
+            <a href="#">Scan Product</a>
+            <a href="#">History</a>
+            <a href="#">Login</a>
+        </nav>
+
+    </div>
+</header>
+
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+
+<footer>
+    <div class="container footer-content">
+        <div>
+            <h3>⚖️ PackCheck AI</h3>
+            <p>
+                AI-assisted packaged commodity compliance inspection system.
+            </p>
+        </div>
+
+        <div>
+            <h3>SIH26034</h3>
+            <p>Legal Metrology Packaged Commodity Compliance</p>
+        </div>
+    </div>
+
+    <div class="copyright">
+        © 2026 PackCheck AI | Smart India Hackathon
+    </div>
+</footer>
+
+</body>
+</html>

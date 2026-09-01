@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Scan Product | PackCheck AI
+{% endblock %}
+
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/scanner.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="scanner-page">
+
+    <div class="scanner-container">
+
+        <!-- HEADER -->
+
+        <div class="scanner-header">
+
+            <div class="header-badge">
+                ✦ AI INSPECTION
+            </div>
+
+            <h1>
+                Scan <span>Product</span>
+            </h1>
+
+            <p>
+                Upload a packaged commodity image and let
+                PackCheck AI analyze its compliance.
+            </p>
+
+        </div>
+
+
+        <!-- SCANNER CARD -->
+
+        <div class="scanner-card">
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+                <!-- PRODUCT NAME -->
+
+                <div class="form-group">
+
+                    <label for="product_name">
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="product_name"
+                        name="product_name"
+                        class="form-control"
+                        placeholder="Enter product name"
+                        required>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Product Category
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            Select category
+                        </option>
+
+                        <option value="Food & Beverages">
+                            Food & Beverages
+                        </option>
+
+                        <option value="Grocery">
+                            Grocery
+                        </option>
+
+                        <option value="Personal Care">
+                            Personal Care
+                        </option>
+
+                        <option value="Household Products">
+                            Household Products
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- IMAGE UPLOAD -->
+
+                <div class="upload-box">
+
+                    <div class="upload-icon">
+                        📷
+                    </div>
+
+                    <h3>
+                        Upload Product Image
+                    </h3>
+
+                    <p>
+                        Upload a clear image of the product
+                        label or package.
+                    </p>
+
+                    <label class="file-label">
+
+                        <span>
+                            📁 Choose Product Image
+                        </span>
+
+                        <input
+                            type="file"
+                            name="product_image"
+                            accept="image/png,image/jpeg,image/jpg"
+                            required>
+
+                    </label>
+
+                    <small>
+                        Supported formats: JPG, JPEG, PNG
+                    </small>
+
+                </div>
+
+
+                <!-- INFORMATION -->
+
+                <div class="scan-info">
+
+                    <div class="info-item">
+                        <span>✓</span>
+                        Clear image recommended
+                    </div>
+
+                    <div class="info-item">
+                        <span>✓</span>
+                        Ensure label is readable
+                    </div>
+
+                    <div class="info-item">
+                        <span>✓</span>
+                        AI-powered OCR analysis
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTON -->
+
+                <button
+                    type="submit"
+                    class="scan-button">
+
+                    <span>🔍</span>
+                    Start Compliance Scan
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- BOTTOM INFO -->
+
+        <div class="scanner-footer">
+
+            <div class="footer-item">
+                <strong>01</strong>
+                <span>Upload</span>
+            </div>
+
+            <div class="footer-line"></div>
+
+            <div class="footer-item">
+                <strong>02</strong>
+                <span>AI Analysis</span>
+            </div>
+
+            <div class="footer-line"></div>
+
+            <div class="footer-item">
+                <strong>03</strong>
+                <span>Compliance</span>
+            </div>
+
+            <div class="footer-line"></div>
+
+            <div class="footer-item">
+                <strong>04</strong>
+                <span>Report</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

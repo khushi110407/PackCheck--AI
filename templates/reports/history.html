@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Inspection History | PackCheck AI
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="container">
+
+        <div class="page-header">
+
+            <span>
+                RECORDS
+            </span>
+
+            <h1>
+                Inspection History
+            </h1>
+
+            <p>
+                Search and review previous
+                product inspections.
+            </p>
+
+        </div>
+
+
+        <div class="content-card">
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-8">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Search product...">
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <select class="form-select">
+
+                        <option>
+                            All Status
+                        </option>
+
+                        <option>
+                            Compliant
+                        </option>
+
+                        <option>
+                            Review
+                        </option>
+
+                        <option>
+                            Violation
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Score
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Report
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="empty-table">
+
+                                No inspection records
+                                available.
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

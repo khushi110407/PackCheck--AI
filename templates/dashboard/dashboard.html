@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="dashboard">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="dashboard-header">
+
+        <div>
+            <p class="eyebrow">OVERVIEW</p>
+
+            <h1>Compliance Dashboard</h1>
+
+            <p class="subtitle">
+                Monitor product inspections and compliance activities.
+            </p>
+        </div>
+
+        <a href="{% url 'scanner:upload' %}" class="btn">
+            + New Inspection
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================== -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📦
+            </div>
+
+            <p>Total Scans</p>
+
+            <h2>{{ total_scans }}</h2>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon success">
+                ✓
+            </div>
+
+            <p>Compliant</p>
+
+            <h2>{{ compliant }}</h2>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon warning">
+                ⚠
+            </div>
+
+            <p>Review Required</p>
+
+            <h2>{{ review_required }}</h2>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon danger">
+                !
+            </div>
+
+            <p>Violations</p>
+
+            <h2>{{ violations }}</h2>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         RECENT INSPECTIONS
+    ========================== -->
+
+    <section class="recent-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Recent Inspections
+                </h2>
+
+                <p>
+                    Latest packaged commodity compliance checks
+                </p>
+
+            </div>
+
+            <a href="{% url 'scanner:upload' %}">
+                View All →
+            </a>
+
+        </div>
+
+
+        <div class="inspection-card">
+
+            <div class="empty-icon">
+                📦
+            </div>
+
+            <h3>
+                No inspections yet
+            </h3>
+
+            <p>
+                Start your first product scan to check
+                packaged commodity compliance.
+            </p>
+
+            <a
+                href="{% url 'scanner:upload' %}"
+                class="btn"
+            >
+                Scan Your First Product
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         HOW IT WORKS
+    ========================== -->
+
+    <section class="how-section">
+
+        <h2>
+            How PackCheck AI Works
+        </h2>
+
+        <div class="steps">
+
+
+            <!-- STEP 1 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    1
+                </div>
+
+                <h3>
+                    Upload Product
+                </h3>
+
+                <p>
+                    Upload an image of the packaged commodity.
+                </p>
+
+            </div>
+
+
+            <!-- STEP 2 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    2
+                </div>
+
+                <h3>
+                    AI Analysis
+                </h3>
+
+                <p>
+                    OCR and AI analyze mandatory declarations.
+                </p>
+
+            </div>
+
+
+            <!-- STEP 3 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    3
+                </div>
+
+                <h3>
+                    Compliance Check
+                </h3>
+
+                <p>
+                    Rules are checked against Legal Metrology requirements.
+                </p>
+
+            </div>
+
+
+            <!-- STEP 4 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    4
+                </div>
+
+                <h3>
+                    Get Report
+                </h3>
+
+                <p>
+                    View violations and generate a compliance report.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</section>
+
+{% endblock %}

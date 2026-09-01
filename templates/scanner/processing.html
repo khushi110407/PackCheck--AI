@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Processing | PackCheck AI
+{% endblock %}
+
+
+{% block content %}
+
+<section class="processing-section">
+
+    <div class="processing-card">
+
+        <div class="processing-icon">
+            🔍
+        </div>
+
+        <h1>
+            Analyzing Product
+        </h1>
+
+        <p>
+            PackCheck AI is processing the uploaded
+            product image.
+        </p>
+
+
+        <div class="processing-steps">
+
+            <div class="processing-step active">
+                <span>✓</span>
+                Image received
+            </div>
+
+            <div class="processing-step">
+                <span>02</span>
+                Extracting text using OCR
+            </div>
+
+            <div class="processing-step">
+                <span>03</span>
+                Checking declarations
+            </div>
+
+            <div class="processing-step">
+                <span>04</span>
+                Running compliance rules
+            </div>
+
+        </div>
+
+
+        <div class="progress">
+
+            <div class="progress-bar"
+                 role="progressbar"
+                 style="width: 50%;">
+
+                Processing...
+
+            </div>
+
+        </div>
+
+
+        <p class="small text-muted mt-3">
+
+            Please wait while the analysis
+            is completed.
+
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

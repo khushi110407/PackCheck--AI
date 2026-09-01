@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Scan Result | PackCheck AI
+{% endblock %}
+
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="container">
+
+        <div class="page-header">
+
+            <span>
+                INSPECTION RESULT
+            </span>
+
+            <h1>
+                Compliance Assessment
+            </h1>
+
+            <p>
+                Product scanning and declaration
+                validation results.
+            </p>
+
+        </div>
+
+
+        <!-- RESULT SUMMARY -->
+
+        <div class="row g-4 mb-4">
+
+            <div class="col-md-8">
+
+                <div class="content-card">
+
+                    <div class="card-heading">
+
+                        <h4>
+                            Product Information
+                        </h4>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            Product Name
+                        </strong>
+
+                        <span>
+                            Sample Product
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            Category
+                        </strong>
+
+                        <span>
+                            Food & Beverages
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            Inspection Date
+                        </strong>
+
+                        <span>
+                            Today
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <div class="score-card">
+
+                    <span>
+                        COMPLIANCE SCORE
+                    </span>
+
+                    <div class="score">
+                        0%
+                    </div>
+
+                    <p>
+                        Awaiting analysis
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DECLARATIONS -->
+
+        <div class="content-card mb-4">
+
+            <div class="card-heading">
+
+                <h4>
+                    Mandatory Declarations
+                </h4>
+
+            </div>
+
+
+            <div class="declaration-row">
+
+                <span>
+                    Manufacturer / Packer / Importer
+                </span>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+
+            <div class="declaration-row">
+
+                <span>
+                    Net Quantity
+                </span>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+
+            <div class="declaration-row">
+
+                <span>
+                    Maximum Retail Price (MRP)
+                </span>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+
+            <div class="declaration-row">
+
+                <span>
+                    Manufacturing / Packing Date
+                </span>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+
+            <div class="declaration-row">
+
+                <span>
+                    Consumer Care Details
+                </span>
+
+                <span class="status-review">
+                    Review
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="result-actions">
+
+            <a href="/violations/"
+               class="btn-primary-custom">
+
+                ⚠ View Violations
+
+            </a>
+
+            <a href="/report/"
+               class="btn-secondary-custom">
+
+                📄 Generate Report
+
+            </a>
+
+            <a href="/scan/"
+               class="btn-secondary-custom">
+
+                🔄 Scan Another
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
