@@ -1,0 +1,183 @@
+/* =========================================================
+   PACKCHECK AI - INSPECTION RESULT
+   ========================================================= */
+
+.page-section {
+    padding: 50px 0 70px;
+    min-height: 75vh;
+    background: linear-gradient(135deg, #eef5ff, #f8fbff);
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.page-header span {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 800;
+    color: #172033;
+}
+
+.page-header p {
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 16px;
+}
+
+
+/* Result Card */
+
+.result-card {
+    max-width: 900px;
+    margin: 0 auto 25px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.result-card h2 {
+    margin-top: 0;
+    margin-bottom: 22px;
+    font-size: 21px;
+    color: #172033;
+}
+
+
+/* Product Information */
+
+.result-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.info-item {
+    background: #f8fafc;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.info-item span {
+    display: block;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 7px;
+}
+
+.info-item strong {
+    color: #172033;
+    font-size: 16px;
+}
+
+
+/* Compliance Score */
+
+.score-box {
+    text-align: center;
+    padding: 30px;
+    border-radius: 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.score-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.score-box p {
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+
+/* Declaration List */
+
+.declaration-list {
+    display: grid;
+    gap: 12px;
+}
+
+.declaration-item {
+    padding: 15px 18px;
+    border-radius: 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    font-weight: 600;
+}
+
+
+/* Buttons */
+
+.result-actions {
+    max-width: 900px;
+    margin: 30px auto 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.action-button {
+    display: inline-block;
+    padding: 13px 22px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+.action-button.secondary {
+    background: #ffffff;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .page-header h1 {
+        font-size: 30px;
+    }
+
+    .result-info {
+        grid-template-columns: 1fr;
+    }
+
+    .result-card {
+        padding: 20px;
+    }
+
+    .result-actions {
+        flex-direction: column;
+    }
+
+    .action-button {
+        text-align: center;
+    }
+}

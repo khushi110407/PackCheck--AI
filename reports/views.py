@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
 
-def report_history(request):
+def report(request):
     return render(
         request,
-        'reports/history.html'
+        'reports/report.html'
     )

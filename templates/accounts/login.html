@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}
 Login | PackCheck AI
+{% endblock %}
+
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
 
 
@@ -11,75 +18,110 @@ Login | PackCheck AI
 
     <div class="auth-card">
 
+        <!-- PackCheck AI Logo -->
         <div class="auth-logo">
             ⚖️
         </div>
 
-        <h2>
-            Welcome Back
-        </h2>
+        <!-- Heading -->
+        <h1>Welcome Back</h1>
 
         <p class="auth-subtitle">
             Login to PackCheck AI
         </p>
 
 
+        <!-- Django Messages -->
+        {% if messages %}
+
+            <div class="messages">
+
+                {% for message in messages %}
+
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- Login Form -->
         <form method="POST">
 
             {% csrf_token %}
 
+            <!-- Username -->
             <div class="form-group">
 
-                <label>
+                <label for="username">
                     Username
                 </label>
 
                 <input
                     type="text"
+                    id="username"
                     name="username"
                     class="form-control"
-                    placeholder="Enter username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
                     required>
 
             </div>
 
 
+            <!-- Password -->
             <div class="form-group">
 
-                <label>
+                <label for="password">
                     Password
                 </label>
 
                 <input
                     type="password"
+                    id="password"
                     name="password"
                     class="form-control"
-                    placeholder="Enter password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
                     required>
 
             </div>
 
 
+            <!-- Login Button -->
             <button
                 type="submit"
                 class="auth-button">
 
-                Login
+                🔐 Login
 
             </button>
 
         </form>
 
 
+        <!-- Register Link -->
         <p class="auth-bottom">
 
             Don't have an account?
 
-            <a href="/register/">
+            <a href="{% url 'accounts:register' %}">
                 Create Account
             </a>
 
         </p>
+
+
+        <!-- Security Message -->
+        <div class="secure-login">
+
+            🔒 Your login information is securely protected.
+
+        </div>
 
     </div>
 

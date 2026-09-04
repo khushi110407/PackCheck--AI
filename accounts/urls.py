@@ -1,34 +1,28 @@
 from django.urls import path
-
 from . import views
 
-
-app_name = 'accounts'
-
+app_name = "accounts"
 
 urlpatterns = [
 
+    # Login
     path(
-        'login/',
+        "login/",
         views.login_view,
-        name='login'
+        name="login"
     ),
 
+    # Register
     path(
-        'register/',
+        "register/",
         views.register_view,
-        name='register'
+        name="register"
     ),
 
+    # Logout
     path(
-        'profile/',
-        views.profile,
-        name='profile'
-    ),
-
-    path(
-        'logout/',
+        "logout/",
         views.logout_view,
-        name='logout'
+        name="logout"
     ),
 ]

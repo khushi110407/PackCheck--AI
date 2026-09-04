@@ -1,0 +1,239 @@
+/* =========================================================
+   PACKCHECK AI - VIOLATIONS PAGE
+   ========================================================= */
+
+.page-section {
+    min-height: 75vh;
+    padding: 55px 0 80px;
+    background: linear-gradient(135deg, #eef5ff, #f8fbff);
+}
+
+
+/* =========================
+   PAGE HEADER
+   ========================= */
+
+.page-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.page-header span {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.page-header h1 {
+    margin: 0;
+    color: #172033;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.page-header p {
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 16px;
+}
+
+
+/* =========================
+   MAIN CARD
+   ========================= */
+
+.violations-card {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+}
+
+.violations-card h2 {
+    margin: 0 0 22px;
+    color: #172033;
+    font-size: 22px;
+}
+
+
+/* =========================
+   SUMMARY
+   ========================= */
+
+.violation-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.summary-box {
+    padding: 22px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+}
+
+.summary-number {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.summary-label {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   VIOLATION ITEM
+   ========================= */
+
+.violation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.violation-item {
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid #fecaca;
+    background: #fff7f7;
+}
+
+.violation-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.violation-icon {
+    font-size: 22px;
+}
+
+.violation-title h3 {
+    margin: 0;
+    color: #991b1b;
+    font-size: 17px;
+}
+
+.violation-item p {
+    margin: 7px 0;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.violation-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+}
+
+
+/* =========================
+   NO VIOLATIONS
+   ========================= */
+
+.no-violations {
+    padding: 45px 25px;
+    text-align: center;
+    border-radius: 14px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.no-violations-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.no-violations h3 {
+    margin: 0 0 8px;
+    color: #166534;
+    font-size: 23px;
+}
+
+.no-violations p {
+    margin: 0;
+    color: #64748b;
+}
+
+
+/* =========================
+   ACTION BUTTONS
+   ========================= */
+
+.violation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.violation-button {
+    display: inline-block;
+    padding: 13px 23px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transition: 0.2s ease;
+}
+
+.violation-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.violation-button.secondary {
+    color: #2563eb;
+    background: #ffffff;
+    border: 1px solid #2563eb;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 768px) {
+
+    .page-section {
+        padding: 35px 15px 60px;
+    }
+
+    .page-header h1 {
+        font-size: 30px;
+    }
+
+    .violations-card {
+        padding: 20px;
+    }
+
+    .violation-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .violation-actions {
+        flex-direction: column;
+    }
+
+    .violation-button {
+        text-align: center;
+    }
+}

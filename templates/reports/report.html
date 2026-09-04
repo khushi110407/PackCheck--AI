@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Compliance Report | PackCheck AI
 {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/report.css' %}">
+{% endblock %}
 
 {% block content %}
 
@@ -11,116 +15,79 @@ Compliance Report | PackCheck AI
 
     <div class="container">
 
+        <!-- ================= REPORT HEADER ================= -->
+
         <div class="report-header">
 
             <div>
+                <span>OFFICIAL INSPECTION REPORT</span>
 
-                <span>
-                    OFFICIAL INSPECTION REPORT
-                </span>
-
-                <h1>
-                    Compliance Report
-                </h1>
+                <h1>Compliance Report</h1>
 
                 <p>
                     PackCheck AI • SIH26034
                 </p>
-
             </div>
-
 
             <button
                 type="button"
-                class="btn-primary-custom">
-
+                class="btn-primary-custom"
+                onclick="window.print()">
                 📄 Download PDF
-
             </button>
 
         </div>
 
 
-        <!-- REPORT -->
+        <!-- ================= REPORT CARD ================= -->
 
         <div class="report-card">
 
+            <!-- BRAND -->
 
             <div class="report-title">
 
-                <div>
-                    ⚖️
-                </div>
+                <div>⚖️</div>
 
                 <div>
-
-                    <h2>
-                        PACKCHECK AI
-                    </h2>
+                    <h2>PACKCHECK AI</h2>
 
                     <p>
-                        Packaged Commodity
-                        Compliance Report
+                        Packaged Commodity Compliance Report
                     </p>
-
                 </div>
 
             </div>
 
-
             <hr>
 
 
-            <!-- PRODUCT INFORMATION -->
+            <!-- ================= 1. PRODUCT INFORMATION ================= -->
 
             <h4>
                 1. Product Information
             </h4>
 
-
             <div class="report-grid">
 
                 <div>
-                    <strong>
-                        Product Name
-                    </strong>
-
-                    <span>
-                        Sample Product
-                    </span>
+                    <strong>Product Name</strong>
+                    <span>Sample Product</span>
                 </div>
 
-
                 <div>
-                    <strong>
-                        Category
-                    </strong>
-
-                    <span>
-                        Food & Beverages
-                    </span>
+                    <strong>Category</strong>
+                    <span>Food &amp; Beverages</span>
                 </div>
 
-
                 <div>
-                    <strong>
-                        Inspection Date
-                    </strong>
-
-                    <span>
-                        Not Available
-                    </span>
+                    <strong>Inspection Date</strong>
+                    <span>Not Available</span>
                 </div>
 
-
                 <div>
-                    <strong>
-                        Report ID
-                    </strong>
-
-                    <span>
-                        PC-000001
-                    </span>
+                    <strong>Report ID</strong>
+                    <span>PC-000001</span>
                 </div>
 
             </div>
@@ -129,43 +96,28 @@ Compliance Report | PackCheck AI
             <hr>
 
 
-            <!-- DECLARATIONS -->
+            <!-- ================= 2. EXTRACTED DECLARATIONS ================= -->
 
             <h4>
                 2. Extracted Declarations
             </h4>
 
-
-            <table class="table report-table">
+            <table class="report-table">
 
                 <thead>
 
                     <tr>
-
-                        <th>
-                            Declaration
-                        </th>
-
-                        <th>
-                            Extracted Value
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
+                        <th>Declaration</th>
+                        <th>Extracted Value</th>
+                        <th>Status</th>
                     </tr>
 
                 </thead>
 
-
                 <tbody>
 
                     <tr>
-
-                        <td>
-                            Manufacturer
-                        </td>
+                        <td>Manufacturer</td>
 
                         <td>
                             Awaiting OCR
@@ -174,15 +126,11 @@ Compliance Report | PackCheck AI
                         <td>
                             Review
                         </td>
-
                     </tr>
 
 
                     <tr>
-
-                        <td>
-                            Net Quantity
-                        </td>
+                        <td>Net Quantity</td>
 
                         <td>
                             Awaiting OCR
@@ -191,15 +139,11 @@ Compliance Report | PackCheck AI
                         <td>
                             Review
                         </td>
-
                     </tr>
 
 
                     <tr>
-
-                        <td>
-                            MRP
-                        </td>
+                        <td>MRP</td>
 
                         <td>
                             Awaiting OCR
@@ -208,15 +152,11 @@ Compliance Report | PackCheck AI
                         <td>
                             Review
                         </td>
-
                     </tr>
 
 
                     <tr>
-
-                        <td>
-                            Consumer Care
-                        </td>
+                        <td>Consumer Care</td>
 
                         <td>
                             Awaiting OCR
@@ -225,7 +165,6 @@ Compliance Report | PackCheck AI
                         <td>
                             Review
                         </td>
-
                     </tr>
 
                 </tbody>
@@ -236,12 +175,11 @@ Compliance Report | PackCheck AI
             <hr>
 
 
-            <!-- FINAL ASSESSMENT -->
+            <!-- ================= 3. FINAL ASSESSMENT ================= -->
 
             <h4>
                 3. Final Assessment
             </h4>
-
 
             <div class="assessment-box">
 
@@ -256,9 +194,8 @@ Compliance Report | PackCheck AI
                     </h5>
 
                     <p>
-                        Final compliance status will
-                        be generated after AI/OCR
-                        processing.
+                        Final compliance status will be generated
+                        after AI/OCR processing.
                     </p>
 
                 </div>
@@ -269,10 +206,12 @@ Compliance Report | PackCheck AI
             <hr>
 
 
+            <!-- ================= FOOTER ================= -->
+
             <div class="report-footer">
 
                 <p>
-                    Generated by PackCheck AI
+                    Generated by <strong>PackCheck AI</strong>
                 </p>
 
                 <p>
