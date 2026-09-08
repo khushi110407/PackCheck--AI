@@ -108,9 +108,15 @@ Inspection History | PackCheck AI
         color: #666;
     }
 
+    .report-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
     .view-btn {
         display: inline-block;
-        padding: 8px 14px;
+        padding: 8px 13px;
         border-radius: 7px;
         text-decoration: none;
         font-size: 13px;
@@ -119,7 +125,19 @@ Inspection History | PackCheck AI
         color: white;
     }
 
-    .view-btn:hover {
+    .pdf-btn {
+        display: inline-block;
+        padding: 8px 13px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        background: #2563eb;
+        color: white;
+    }
+
+    .view-btn:hover,
+    .pdf-btn:hover {
         opacity: 0.85;
     }
 
@@ -153,7 +171,7 @@ Inspection History | PackCheck AI
         }
 
         .table {
-            min-width: 750px;
+            min-width: 900px;
         }
 
     }
@@ -390,12 +408,28 @@ Inspection History | PackCheck AI
 
                             <td>
 
-                                <a
-                                    href="{% url 'scanner:result' scan.id %}"
-                                    class="view-btn"
-                                >
-                                    View Result
-                                </a>
+                                <div class="report-buttons">
+
+                                    <!-- VIEW REPORT -->
+
+                                    <a
+                                        href="{% url 'reports:report_detail' scan.id %}"
+                                        class="view-btn"
+                                    >
+                                        View Report
+                                    </a>
+
+
+                                    <!-- DOWNLOAD PDF -->
+
+                                    <a
+                                        href="{% url 'reports:download_pdf_specific' scan.id %}"
+                                        class="pdf-btn"
+                                    >
+                                        PDF
+                                    </a>
+
+                                </div>
 
                             </td>
 

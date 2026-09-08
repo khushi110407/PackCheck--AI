@@ -36,17 +36,13 @@ Dashboard | PackCheck AI
                 OVERVIEW
             </p>
 
-
             <h1>
                 Compliance Dashboard
             </h1>
 
-
             <p class="subtitle">
-
                 Monitor product inspections
-                and compliance activities.
-
+                and AI-powered compliance activities.
             </p>
 
         </div>
@@ -56,9 +52,7 @@ Dashboard | PackCheck AI
             href="{% url 'scanner:upload' %}"
             class="btn"
         >
-
             + New Inspection
-
         </a>
 
     </div>
@@ -66,7 +60,7 @@ Dashboard | PackCheck AI
 
 
     <!-- =========================
-         STATISTICS
+         BASIC STATISTICS
     ========================== -->
 
     <div class="stats-grid">
@@ -80,11 +74,9 @@ Dashboard | PackCheck AI
                 📦
             </div>
 
-
             <p>
                 Total Scans
             </p>
-
 
             <h2>
                 {{ total_scans }}
@@ -102,11 +94,9 @@ Dashboard | PackCheck AI
                 ✓
             </div>
 
-
             <p>
                 Compliant
             </p>
-
 
             <h2>
                 {{ compliant }}
@@ -124,11 +114,9 @@ Dashboard | PackCheck AI
                 ⚠
             </div>
 
-
             <p>
                 Review Required
             </p>
-
 
             <h2>
                 {{ review_required }}
@@ -146,11 +134,9 @@ Dashboard | PackCheck AI
                 !
             </div>
 
-
             <p>
                 Violations
             </p>
-
 
             <h2>
                 {{ violations }}
@@ -159,6 +145,158 @@ Dashboard | PackCheck AI
         </div>
 
     </div>
+
+
+
+    <!-- =========================
+         AI / ML ANALYSIS
+    ========================== -->
+
+    <section class="recent-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <p class="eyebrow">
+                    ARTIFICIAL INTELLIGENCE
+                </p>
+
+                <h2>
+                    🤖 AI / ML Analysis
+                </h2>
+
+                <p>
+                    Product classification and
+                    machine-assisted detection statistics.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+
+            <!-- PACKAGED COMMODITY -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📦
+                </div>
+
+                <p>
+                    Packaged Commodity
+                </p>
+
+                <h2>
+                    {{ packaged_products }}
+                </h2>
+
+                <small>
+                    Successfully classified
+                </small>
+
+            </div>
+
+
+
+            <!-- POSSIBLE -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon warning">
+                    🔍
+                </div>
+
+                <p>
+                    Possible Commodity
+                </p>
+
+                <h2>
+                    {{ possible_packaged_products }}
+                </h2>
+
+                <small>
+                    Requires further review
+                </small>
+
+            </div>
+
+
+
+            <!-- UNKNOWN -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon danger">
+                    ?
+                </div>
+
+                <p>
+                    Unknown Products
+                </p>
+
+                <h2>
+                    {{ unknown_products }}
+                </h2>
+
+                <small>
+                    Could not be classified
+                </small>
+
+            </div>
+
+
+
+            <!-- ML CONFIDENCE -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon success">
+                    🎯
+                </div>
+
+                <p>
+                    Average AI Confidence
+                </p>
+
+                <h2>
+                    {{ average_ml_confidence }}%
+                </h2>
+
+                <small>
+                    Classification confidence
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- ML DETECTION -->
+
+        <div class="inspection-card">
+
+            <div class="empty-icon">
+                🧠
+            </div>
+
+            <h3>
+                {{ packaged_detection_percentage }}%
+                AI Detection Rate
+            </h3>
+
+            <p>
+                Percentage of scanned products
+                classified as packaged commodities.
+            </p>
+
+        </div>
+
+    </section>
 
 
 
@@ -176,7 +314,6 @@ Dashboard | PackCheck AI
                 <h2>
                     Compliance Overview
                 </h2>
-
 
                 <p>
                     Overall compliance performance
@@ -244,9 +381,7 @@ Dashboard | PackCheck AI
             <a
                 href="{% url 'reports:history' %}"
             >
-
                 View All →
-
             </a>
 
         </div>
@@ -319,6 +454,24 @@ Dashboard | PackCheck AI
 
                                 {{ scan.violation_count }}
                                 violation(s)
+
+                            </p>
+
+
+                            <!-- ML RESULT -->
+
+                            <p>
+
+                                🤖
+                                {{ scan.ml_label }}
+
+                            </p>
+
+
+                            <p>
+
+                                AI Confidence:
+                                {{ scan.ml_confidence }}
 
                             </p>
 
@@ -446,8 +599,8 @@ Dashboard | PackCheck AI
 
                 <p>
 
-                    OCR analyzes mandatory
-                    declarations.
+                    OCR and AI classification
+                    analyze the product information.
 
                 </p>
 

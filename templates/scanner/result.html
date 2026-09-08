@@ -12,17 +12,24 @@
 <section class="page-section">
     <div class="container">
 
+        <!-- PAGE HEADER -->
+
         <div class="page-header">
             <span>AI ANALYSIS RESULT</span>
+
             <h1>Product Compliance Result</h1>
+
             <p>
-                PackCheck AI analyzed the uploaded product using OCR
-                and rule-based compliance checking.
+                PackCheck AI analyzed the uploaded product using
+                OCR, AI-assisted classification and rule-based
+                compliance checking.
             </p>
         </div>
 
 
-        <!-- PRODUCT INFORMATION -->
+        <!-- =====================================================
+             PRODUCT INFORMATION
+        ====================================================== -->
 
         <div class="content-card">
 
@@ -31,24 +38,35 @@
             <div class="info-grid">
 
                 <div class="info-item">
+
                     <strong>Product Name</strong>
+
                     <span>
                         {{ scan.product_name|default:"Not Provided" }}
                     </span>
+
                 </div>
 
+
                 <div class="info-item">
+
                     <strong>Category</strong>
+
                     <span>
                         {{ scan.category|default:"Not Provided" }}
                     </span>
+
                 </div>
 
+
                 <div class="info-item">
+
                     <strong>Scan Date</strong>
+
                     <span>
                         {{ scan.scanned_at|date:"d M Y, h:i A" }}
                     </span>
+
                 </div>
 
             </div>
@@ -56,7 +74,9 @@
         </div>
 
 
-        <!-- PRODUCT IMAGE -->
+        <!-- =====================================================
+             PRODUCT IMAGE
+        ====================================================== -->
 
         {% if scan.product_image %}
 
@@ -78,7 +98,156 @@
         {% endif %}
 
 
-        <!-- OCR RESULT -->
+        <!-- =====================================================
+             AI / ML CLASSIFICATION
+        ====================================================== -->
+
+        <div class="content-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        AI / ML ANALYSIS
+                    </span>
+
+                    <h3>🤖 Product Classification</h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="assessment-box">
+
+                <div>
+
+                    <strong>Classification</strong>
+
+                    <h4>
+                        {{ classification_label|default:"UNKNOWN" }}
+                    </h4>
+
+                </div>
+
+
+                <div>
+
+                    <strong>Confidence</strong>
+
+                    <h4>
+                        {{ classification_confidence|default:"0" }}
+                    </h4>
+
+                </div>
+
+            </div>
+
+
+            <!-- DETECTED KEYWORDS -->
+
+            <div style="margin-top: 25px;">
+
+                <strong>
+                    🔎 Detected AI Keywords
+                </strong>
+
+                {% if detected_keywords %}
+
+                    <div
+                        style="
+                            display:flex;
+                            flex-wrap:wrap;
+                            gap:10px;
+                            margin-top:15px;
+                        "
+                    >
+
+                        {% for keyword in detected_keywords %}
+
+                            <span
+                                style="
+                                    padding:8px 14px;
+                                    border-radius:20px;
+                                    background:#eef2ff;
+                                    color:#3730a3;
+                                    font-size:14px;
+                                    font-weight:600;
+                                "
+                            >
+                                {{ keyword|title }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <p style="margin-top:10px;">
+                        No specific keywords detected.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- DETECTED CATEGORIES -->
+
+            <div style="margin-top:25px;">
+
+                <strong>
+                    📊 Detected Declaration Categories
+                </strong>
+
+                {% if detected_categories %}
+
+                    <div
+                        style="
+                            display:flex;
+                            flex-wrap:wrap;
+                            gap:10px;
+                            margin-top:15px;
+                        "
+                    >
+
+                        {% for category in detected_categories %}
+
+                            <span
+                                style="
+                                    padding:8px 14px;
+                                    border-radius:20px;
+                                    background:#ecfdf5;
+                                    color:#047857;
+                                    font-size:14px;
+                                    font-weight:600;
+                                "
+                            >
+                                {{ category|title }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <p style="margin-top:10px;">
+                        No declaration categories detected.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             OCR RESULT
+        ====================================================== -->
 
         <div class="content-card">
 
@@ -93,6 +262,7 @@
                     <h3>🔍 OCR Extracted Text</h3>
 
                 </div>
+
 
                 {% if ocr_success %}
 
@@ -141,7 +311,9 @@
         </div>
 
 
-        <!-- DECLARATIONS -->
+        <!-- =====================================================
+             DECLARATIONS
+        ====================================================== -->
 
         <div class="content-card">
 
@@ -162,66 +334,116 @@
 
             <div class="info-grid">
 
+                <!-- MANUFACTURER -->
+
                 <div class="info-item">
 
                     <strong>Manufacturer</strong>
 
                     {% if declarations.manufacturer %}
-                        <span>✓ {{ declarations.manufacturer }}</span>
+
+                        <span>
+                            ✓ {{ declarations.manufacturer }}
+                        </span>
+
                     {% else %}
-                        <span>❌ Not Detected</span>
+
+                        <span>
+                            ❌ Not Detected
+                        </span>
+
                     {% endif %}
 
                 </div>
 
+
+                <!-- NET QUANTITY -->
 
                 <div class="info-item">
 
                     <strong>Net Quantity</strong>
 
                     {% if declarations.net_quantity %}
-                        <span>✓ {{ declarations.net_quantity }}</span>
+
+                        <span>
+                            ✓ {{ declarations.net_quantity }}
+                        </span>
+
                     {% else %}
-                        <span>❌ Not Detected</span>
+
+                        <span>
+                            ❌ Not Detected
+                        </span>
+
                     {% endif %}
 
                 </div>
 
+
+                <!-- MRP -->
 
                 <div class="info-item">
 
                     <strong>MRP</strong>
 
                     {% if declarations.mrp %}
-                        <span>✓ {{ declarations.mrp }}</span>
+
+                        <span>
+                            ✓ {{ declarations.mrp }}
+                        </span>
+
                     {% else %}
-                        <span>❌ Not Detected</span>
+
+                        <span>
+                            ❌ Not Detected
+                        </span>
+
                     {% endif %}
 
                 </div>
 
+
+                <!-- MANUFACTURING DATE -->
 
                 <div class="info-item">
 
                     <strong>Manufacturing Date</strong>
 
                     {% if declarations.manufacturing_date %}
-                        <span>✓ {{ declarations.manufacturing_date }}</span>
+
+                        <span>
+                            ✓ {{ declarations.manufacturing_date }}
+                        </span>
+
                     {% else %}
-                        <span>❌ Not Detected</span>
+
+                        <span>
+                            ❌ Not Detected
+                        </span>
+
                     {% endif %}
 
                 </div>
 
+
+                <!-- CONSUMER CARE -->
 
                 <div class="info-item">
 
                     <strong>Consumer Care</strong>
 
                     {% if declarations.consumer_care %}
-                        <span>✓ {{ declarations.consumer_care }}</span>
+
+                        <span>
+                            ✓ {{ declarations.consumer_care }}
+                        </span>
+
                     {% else %}
-                        <span>❌ Not Detected</span>
+
+                        <span>
+                            ❌ Not Detected
+                        </span>
+
                     {% endif %}
 
                 </div>
@@ -231,7 +453,9 @@
         </div>
 
 
-        <!-- COMPLIANCE SCORE -->
+        <!-- =====================================================
+             COMPLIANCE SCORE
+        ====================================================== -->
 
         <div class="content-card">
 
@@ -245,7 +469,9 @@
                         {{ compliance_result.score|default:"0" }}%
                     </span>
 
-                    <small>Score</small>
+                    <small>
+                        Score
+                    </small>
 
                 </div>
 
@@ -257,8 +483,12 @@
                     </h4>
 
                     <p>
+
                         {{ compliance_result.violation_count|default:"0" }}
-                        violation(s) detected during the compliance check.
+
+                        violation(s) detected during the
+                        compliance check.
+
                     </p>
 
                 </div>
@@ -268,7 +498,9 @@
         </div>
 
 
-        <!-- VIOLATIONS -->
+        <!-- =====================================================
+             VIOLATIONS
+        ====================================================== -->
 
         <div class="content-card">
 
@@ -280,7 +512,9 @@
                         COMPLIANCE CHECK
                     </span>
 
-                    <h3>🚨 Detected Violations</h3>
+                    <h3>
+                        🚨 Detected Violations
+                    </h3>
 
                 </div>
 
@@ -306,11 +540,14 @@
                                 </p>
 
                                 <small>
+
                                     Declaration:
                                     {{ violation.declaration }}
+
                                 </small>
 
                             </div>
+
 
                             <span>
                                 {{ violation.severity }}
@@ -330,7 +567,9 @@
                         ✅
                     </div>
 
-                    <h4>No Violations Detected</h4>
+                    <h4>
+                        No Violations Detected
+                    </h4>
 
                     <p>
                         All currently configured declarations
@@ -344,7 +583,9 @@
         </div>
 
 
-        <!-- ACTION BUTTONS -->
+        <!-- =====================================================
+             ACTION BUTTONS
+        ====================================================== -->
 
         <div class="action-buttons">
 
@@ -355,6 +596,7 @@
                 🔄 Scan Another Product
             </a>
 
+
             <a
                 href="{% url 'compliance:violations' %}"
                 class="action-button"
@@ -362,12 +604,14 @@
                 🔍 View Violations
             </a>
 
+
             <a
                 href="{% url 'reports:report' %}"
                 class="action-button"
             >
                 📄 Generate Report
             </a>
+
 
             <a
                 href="{% url 'dashboard:dashboard' %}"

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+
+    <style>
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #222;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 16px;
+        }
+
+        h3 {
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .info td {
+            padding: 6px;
+            border: 1px solid #ddd;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        th {
+            background: #eeeeee;
+            font-weight: bold;
+        }
+
+        th,
+        td {
+            border: 1px solid #cccccc;
+            padding: 7px;
+            text-align: left;
+        }
+
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        .ocr {
+            background: #f5f5f5;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+
+        .footer {
+            margin-top: 25px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            font-size: 9px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            ⚖️ PACKCHECK AI
+        </h1>
+
+        <div>
+            Packaged Commodity Compliance Report
+        </div>
+
+        <div>
+            SIH26034 • Legal Metrology
+        </div>
+
+    </div>
+
+
+    <!-- PRODUCT INFORMATION -->
+
+    <h3>
+        1. Product Information
+    </h3>
+
+    <table class="info">
+
+        <tr>
+
+            <td>
+                <strong>Product Name</strong>
+            </td>
+
+            <td>
+                {{ report.product_name|default:"Not Provided" }}
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Category</strong>
+            </td>
+
+            <td>
+                {{ report.category|default:"Not Provided" }}
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Report ID</strong>
+            </td>
+
+            <td>
+                PC-{{ report.id|stringformat:"06d" }}
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <strong>Inspection Date</strong>
+            </td>
+
+            <td>
+                {{ report.created_at|date:"d M Y, h:i A" }}
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- AI / ML -->
+
+    <h3>
+        2. AI / ML Analysis
+    </h3>
+
+    <table>
+
+        <tr>
+
+            <th>
+                Classification
+            </th>
+
+            <th>
+                Confidence
+            </th>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                {{ report.ml_label|default:"UNKNOWN" }}
+            </td>
+
+            <td>
+                {{ report.ml_confidence }}
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <!-- DECLARATIONS -->
+
+    <h3>
+        3. Extracted Declarations
+    </h3>
+
+    <table>
+
+        <tr>
+            <th>Declaration</th>
+            <th>Extracted Value</th>
+        </tr>
+
+        <tr>
+            <td>Manufacturer</td>
+            <td>
+                {{ report.manufacturer|default:"Not Detected" }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Net Quantity</td>
+            <td>
+                {{ report.net_quantity|default:"Not Detected" }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>MRP</td>
+            <td>
+                {{ report.mrp|default:"Not Detected" }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Manufacturing Date</td>
+            <td>
+                {{ report.manufacturing_date|default:"Not Detected" }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Consumer Care</td>
+            <td>
+                {{ report.consumer_care|default:"Not Detected" }}
+            </td>
+        </tr>
+
+    </table>
+
+
+    <!-- COMPLIANCE -->
+
+    <h3>
+        4. Final Compliance Assessment
+    </h3>
+
+    <div class="score">
+
+        Score:
+        {{ report.score }}%
+
+        <br>
+
+        Status:
+        {{ report.status }}
+
+        <br>
+
+        Violations:
+        {{ report.violation_count }}
+
+    </div>
+
+
+    <!-- VIOLATIONS -->
+
+    <h3>
+        5. Detected Violations
+    </h3>
+
+    {% if report.violations %}
+
+        <table>
+
+            <tr>
+
+                <th>
+                    Violation
+                </th>
+
+                <th>
+                    Description
+                </th>
+
+                <th>
+                    Severity
+                </th>
+
+            </tr>
+
+            {% for violation in report.violations %}
+
+            <tr>
+
+                <td>
+                    {{ violation.violation_type }}
+                </td>
+
+                <td>
+                    {{ violation.description }}
+                </td>
+
+                <td>
+                    {{ violation.severity }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    {% else %}
+
+        <p>
+            ✓ No violations detected.
+        </p>
+
+    {% endif %}
+
+
+    <!-- OCR -->
+
+    <h3>
+        6. OCR Extracted Text
+    </h3>
+
+    {% if report.ocr_text %}
+
+        <div class="ocr">
+            {{ report.ocr_text }}
+        </div>
+
+    {% else %}
+
+        <p>
+            No OCR text available.
+        </p>
+
+    {% endif %}
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        Generated by <strong>PackCheck AI</strong>
+
+        <br>
+
+        SIH26034 • Legal Metrology
+
+        <br>
+
+        This report is AI-assisted and should be verified
+        by an authorized inspector where required.
+
+    </div>
+
+
+</body>
+</html>

@@ -3,10 +3,6 @@ from django.db import models
 
 class ComplianceReport(models.Model):
 
-    # -----------------------------------------
-    # Product Information
-    # -----------------------------------------
-
     product_name = models.CharField(
         max_length=255,
         blank=True
@@ -17,11 +13,6 @@ class ComplianceReport(models.Model):
         blank=True
     )
 
-
-    # -----------------------------------------
-    # OCR Result
-    # -----------------------------------------
-
     ocr_text = models.TextField(
         blank=True
     )
@@ -29,11 +20,6 @@ class ComplianceReport(models.Model):
     ocr_success = models.BooleanField(
         default=False
     )
-
-
-    # -----------------------------------------
-    # Detected Declarations
-    # -----------------------------------------
 
     manufacturer = models.CharField(
         max_length=500,
@@ -65,11 +51,28 @@ class ComplianceReport(models.Model):
         null=True
     )
 
+    # AI / ML fields
+    ml_label = models.CharField(
+        max_length=100,
+        blank=True,
+        default="UNKNOWN"
+    )
 
-    # -----------------------------------------
-    # Compliance Result
-    # -----------------------------------------
+    ml_confidence = models.FloatField(
+        default=0.0
+    )
 
+    detected_keywords = models.JSONField(
+        default=list,
+        blank=True
+    )
+
+    detected_categories = models.JSONField(
+        default=list,
+        blank=True
+    )
+
+    # Compliance
     score = models.PositiveIntegerField(
         default=0
     )
@@ -88,11 +91,6 @@ class ComplianceReport(models.Model):
         blank=True
     )
 
-
-    # -----------------------------------------
-    # Timestamps
-    # -----------------------------------------
-
     created_at = models.DateTimeField(
         auto_now_add=True
     )
@@ -101,19 +99,9 @@ class ComplianceReport(models.Model):
         auto_now=True
     )
 
-
-    # -----------------------------------------
-    # Display
-    # -----------------------------------------
-
     def __str__(self):
 
         if self.product_name:
-            return (
-                f"{self.product_name} - "
-                f"{self.status}"
-            )
+            return f"{self.product_name} - {self.status}"
 
-        return (
-            f"Compliance Report #{self.id}"
-        )
+        return f"Compliance Report #{self.id}"

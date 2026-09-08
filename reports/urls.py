@@ -3,21 +3,44 @@ from django.urls import path
 from . import views
 
 
-app_name = 'reports'
+app_name = "reports"
 
 
 urlpatterns = [
 
+    # Latest report
     path(
-        'report/',
+        "report/",
         views.report,
-        name='report'
+        name="report"
     ),
 
+    # Specific report
     path(
-        'history/',
+        "report/<int:report_id>/",
+        views.report_detail,
+        name="report_detail"
+    ),
+
+    # Latest PDF
+    path(
+        "download-pdf/",
+        views.download_pdf,
+        name="download_pdf"
+    ),
+
+    # Specific PDF
+    path(
+        "download-pdf/<int:report_id>/",
+        views.download_pdf,
+        name="download_pdf_specific"
+    ),
+
+    # Inspection History
+    path(
+        "history/",
         views.history,
-        name='history'
+        name="history"
     ),
 
 ]

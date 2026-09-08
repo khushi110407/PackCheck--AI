@@ -1,653 +1,741 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends "base.html" %}
 
 {% block title %}
-Compliance Report | PackCheck AI
+    Compliance Report | PackCheck AI
 {% endblock %}
 
-
 {% block extra_css %}
-
-<link
-    rel="stylesheet"
-    href="{% static 'css/report.css' %}"
->
-
 <style>
-
-    @media print {
-
-        .navbar,
-        footer,
-        .btn-primary-custom {
-            display: none !important;
-        }
-
-        .page-section {
-            padding: 0 !important;
-        }
-
-        .report-card {
-            box-shadow: none !important;
-        }
-
+    .report-page {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px 50px;
     }
 
-</style>
+    .report-header {
+        background: linear-gradient(135deg, #0f172a, #1e3a8a);
+        color: white;
+        padding: 30px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
 
+    .report-header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+    }
+
+    .report-header p {
+        margin: 0;
+        opacity: 0.85;
+    }
+
+    .top-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 11px 18px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: white;
+        color: #1e3a8a;
+    }
+
+    .btn-secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    .section {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 22px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    }
+
+    .section h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #0f172a;
+        font-size: 21px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 12px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .info-box {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .info-label {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #0f172a;
+        word-break: break-word;
+    }
+
+    .ai-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .ai-label {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 5px;
+    }
+
+    .ai-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1d4ed8;
+    }
+
+    .tag-container {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .tag {
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .compliance-summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+    }
+
+    .summary-card {
+        padding: 20px;
+        border-radius: 12px;
+        background: #f8fafc;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+
+    .summary-number {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .summary-label {
+        margin-top: 5px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 7px 13px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .status-compliant {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-partial {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-non {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-pending {
+        background: #e2e8f0;
+        color: #334155;
+    }
+
+    .violation {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        color: #9a3412;
+    }
+
+    .violation:last-child {
+        margin-bottom: 0;
+    }
+
+    .ocr-box {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: monospace;
+        line-height: 1.6;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .empty {
+        color: #64748b;
+        font-style: italic;
+    }
+
+    .report-footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    @media (max-width: 800px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .compliance-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 500px) {
+        .compliance-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .report-header h1 {
+            font-size: 24px;
+        }
+    }
+</style>
 {% endblock %}
 
 
 {% block content %}
 
-<section class="page-section">
+<div class="report-page">
 
-    <div class="container">
+    {% if report %}
 
+    <!-- HEADER -->
+    <div class="report-header">
 
-        <!-- ================= REPORT HEADER ================= -->
+        <h1>Compliance Report</h1>
 
-        <div class="report-header">
+        <p>
+            PackCheck AI - Legal Metrology Compliance Analysis
+        </p>
 
-            <div>
+        <div class="top-actions">
 
-                <span>
-                    OFFICIAL INSPECTION REPORT
-                </span>
-
-                <h1>
-                    Compliance Report
-                </h1>
-
-                <p>
-                    PackCheck AI • SIH26034
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="btn-primary-custom"
-                onclick="window.print()"
+            <a
+                href="{% url 'reports:download_pdf_specific' report.id %}"
+                class="btn btn-primary"
             >
-
-                📄 Download PDF
-
-            </button>
-
-        </div>
-
-
-
-        <!-- ================= REPORT CARD ================= -->
-
-        <div class="report-card">
-
-
-            <!-- BRAND -->
-
-            <div class="report-title">
-
-                <div>
-                    ⚖️
-                </div>
-
-                <div>
-
-                    <h2>
-                        PACKCHECK AI
-                    </h2>
-
-                    <p>
-                        Packaged Commodity Compliance Report
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <hr>
-
-
-
-            <!-- ================= PRODUCT INFORMATION ================= -->
-
-            <h4>
-                1. Product Information
-            </h4>
-
-
-            {% if scan %}
-
-            <div class="report-grid">
-
-
-                <div>
-
-                    <strong>
-                        Product Name
-                    </strong>
-
-                    <span>
-                        {{ scan.product_name|default:"Not Provided" }}
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <strong>
-                        Category
-                    </strong>
-
-                    <span>
-                        {{ scan.category|default:"Not Provided" }}
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <strong>
-                        Inspection Date
-                    </strong>
-
-                    <span>
-                        {{ scan.scanned_at|date:"d M Y, h:i A" }}
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <strong>
-                        Report ID
-                    </strong>
-
-                    <span>
-                        PC-{{ scan.id|stringformat:"06d" }}
-                    </span>
-
-                </div>
-
-
-            </div>
-
-            {% else %}
-
-            <div class="report-grid">
-
-                <div>
-
-                    <strong>
-                        Product Name
-                    </strong>
-
-                    <span>
-                        No Scan Available
-                    </span>
-
-                </div>
-
-            </div>
-
-            {% endif %}
-
-
-
-            <hr>
-
-
-
-            <!-- ================= EXTRACTED DECLARATIONS ================= -->
-
-            <h4>
-                2. Extracted Declarations
-            </h4>
-
-
-            <table class="report-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Declaration
-                        </th>
-
-                        <th>
-                            Extracted Value
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                    <!-- MANUFACTURER -->
-
-                    <tr>
-
-                        <td>
-                            Manufacturer
-                        </td>
-
-                        <td>
-
-                            {% if declarations.manufacturer %}
-
-                                {{ declarations.manufacturer }}
-
-                            {% else %}
-
-                                Not Detected
-
-                            {% endif %}
-
-                        </td>
-
-                        <td>
-
-                            {% if declarations.manufacturer %}
-
-                                ✓ Detected
-
-                            {% else %}
-
-                                ✕ Missing
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-
-
-                    <!-- NET QUANTITY -->
-
-                    <tr>
-
-                        <td>
-                            Net Quantity
-                        </td>
-
-                        <td>
-
-                            {% if declarations.net_quantity %}
-
-                                {{ declarations.net_quantity }}
-
-                            {% else %}
-
-                                Not Detected
-
-                            {% endif %}
-
-                        </td>
-
-                        <td>
-
-                            {% if declarations.net_quantity %}
-
-                                ✓ Detected
-
-                            {% else %}
-
-                                ✕ Missing
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-
-
-                    <!-- MRP -->
-
-                    <tr>
-
-                        <td>
-                            MRP
-                        </td>
-
-                        <td>
-
-                            {% if declarations.mrp %}
-
-                                {{ declarations.mrp }}
-
-                            {% else %}
-
-                                Not Detected
-
-                            {% endif %}
-
-                        </td>
-
-                        <td>
-
-                            {% if declarations.mrp %}
-
-                                ✓ Detected
-
-                            {% else %}
-
-                                ✕ Missing
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-
-
-                    <!-- MANUFACTURING DATE -->
-
-                    <tr>
-
-                        <td>
-                            Manufacturing Date
-                        </td>
-
-                        <td>
-
-                            {% if declarations.manufacturing_date %}
-
-                                {{ declarations.manufacturing_date }}
-
-                            {% else %}
-
-                                Not Detected
-
-                            {% endif %}
-
-                        </td>
-
-                        <td>
-
-                            {% if declarations.manufacturing_date %}
-
-                                ✓ Detected
-
-                            {% else %}
-
-                                ✕ Missing
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-
-
-                    <!-- CONSUMER CARE -->
-
-                    <tr>
-
-                        <td>
-                            Consumer Care
-                        </td>
-
-                        <td>
-
-                            {% if declarations.consumer_care %}
-
-                                {{ declarations.consumer_care }}
-
-                            {% else %}
-
-                                Not Detected
-
-                            {% endif %}
-
-                        </td>
-
-                        <td>
-
-                            {% if declarations.consumer_care %}
-
-                                ✓ Detected
-
-                            {% else %}
-
-                                ✕ Missing
-
-                            {% endif %}
-
-                        </td>
-
-                    </tr>
-
-
-                </tbody>
-
-            </table>
-
-
-
-            <hr>
-
-
-
-            <!-- ================= OCR TEXT ================= -->
-
-            <h4>
-                3. OCR Extracted Text
-            </h4>
-
-
-            {% if ocr_text %}
-
-                <div
-                    style="
-                        background:#f7f7f7;
-                        padding:15px;
-                        border-radius:8px;
-                        white-space:pre-wrap;
-                        font-size:14px;
-                    "
-                >
-
-                    {{ ocr_text }}
-
-                </div>
-
-            {% else %}
-
-                <p>
-                    No OCR text available.
-                </p>
-
-            {% endif %}
-
-
-
-            <hr>
-
-
-
-            <!-- ================= FINAL ASSESSMENT ================= -->
-
-            <h4>
-                4. Final Assessment
-            </h4>
-
-
-            <div class="assessment-box">
-
-
-                <div class="assessment-score">
-
-                    {{ compliance_result.score|default:"0" }}%
-
-                </div>
-
-
-                <div>
-
-                    <h5>
-
-                        {{ compliance_result.status|default:"Analysis Pending" }}
-
-                    </h5>
-
-
-                    <p>
-
-                        {{ compliance_result.violation_count|default:"0" }}
-                        violation(s) detected during compliance checking.
-
-                    </p>
-
-                </div>
-
-
-            </div>
-
-
-
-            <hr>
-
-
-
-            <!-- ================= VIOLATIONS ================= -->
-
-            <h4>
-                5. Detected Violations
-            </h4>
-
-
-            {% if compliance_result.violations %}
-
-
-                <table class="report-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                Violation
-                            </th>
-
-                            <th>
-                                Description
-                            </th>
-
-                            <th>
-                                Severity
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-
-                        {% for violation in compliance_result.violations %}
-
-                        <tr>
-
-                            <td>
-
-                                {{ violation.violation_type }}
-
-                            </td>
-
-
-                            <td>
-
-                                {{ violation.description }}
-
-                            </td>
-
-
-                            <td>
-
-                                {{ violation.severity }}
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-
-                    </tbody>
-
-                </table>
-
-
-            {% else %}
-
-
-                <div
-                    style="
-                        padding:20px;
-                        background:#f1f8f4;
-                        border-radius:8px;
-                    "
-                >
-
-                    ✓ No violations detected.
-
-                </div>
-
-
-            {% endif %}
-
-
-
-            <hr>
-
-
-
-            <!-- ================= FOOTER ================= -->
-
-            <div class="report-footer">
-
-                <p>
-
-                    Generated by
-                    <strong>
-                        PackCheck AI
-                    </strong>
-
-                </p>
-
-
-                <p>
-
-                    SIH26034 • Legal Metrology
-
-                </p>
-
-            </div>
-
+                Download PDF
+            </a>
+
+            <a
+                href="{% url 'reports:history' %}"
+                class="btn btn-secondary"
+            >
+                View History
+            </a>
+
+            <a
+                href="{% url 'scanner:upload' %}"
+                class="btn btn-secondary"
+            >
+                Scan Another Product
+            </a>
 
         </div>
 
     </div>
 
-</section>
+
+    <!-- REPORT INFORMATION -->
+    <div class="section">
+
+        <h2>Product Information</h2>
+
+        <div class="info-grid">
+
+            <div class="info-box">
+                <div class="info-label">
+                    Report ID
+                </div>
+
+                <div class="info-value">
+                    #{{ report.id }}
+                </div>
+            </div>
+
+
+            <div class="info-box">
+                <div class="info-label">
+                    Product Name
+                </div>
+
+                <div class="info-value">
+                    {{ report.product_name|default:"Not Specified" }}
+                </div>
+            </div>
+
+
+            <div class="info-box">
+                <div class="info-label">
+                    Category
+                </div>
+
+                <div class="info-value">
+                    {{ report.category|default:"Not Specified" }}
+                </div>
+            </div>
+
+
+            <div class="info-box">
+                <div class="info-label">
+                    Scan Date
+                </div>
+
+                <div class="info-value">
+                    {{ report.created_at|date:"d M Y, h:i A" }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- AI / ML ANALYSIS -->
+    <div class="section">
+
+        <h2>AI / ML Analysis</h2>
+
+        <div class="info-grid">
+
+            <div class="ai-box">
+
+                <div class="ai-label">
+                    Product Classification
+                </div>
+
+                <div class="ai-value">
+                    {{ report.ml_label|default:"UNKNOWN" }}
+                </div>
+
+            </div>
+
+
+            <div class="ai-box">
+
+                <div class="ai-label">
+                    AI Confidence
+                </div>
+
+                <div class="ai-value">
+                    {% widthratio report.ml_confidence 1 100 %}%
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% if report.detected_keywords %}
+
+        <div style="margin-top:20px;">
+
+            <div class="ai-label">
+                Detected Keywords
+            </div>
+
+            <div class="tag-container">
+
+                {% for keyword in report.detected_keywords %}
+
+                    <span class="tag">
+                        {{ keyword }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        {% if report.detected_categories %}
+
+        <div style="margin-top:20px;">
+
+            <div class="ai-label">
+                Detected Declaration Categories
+            </div>
+
+            <div class="tag-container">
+
+                {% for category in report.detected_categories %}
+
+                    <span class="tag">
+                        {{ category }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- DECLARATIONS -->
+    <div class="section">
+
+        <h2>Detected Mandatory Declarations</h2>
+
+        <div class="info-grid">
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Manufacturer
+                </div>
+
+                <div class="info-value">
+                    {{ report.manufacturer|default:"Not Detected" }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Net Quantity
+                </div>
+
+                <div class="info-value">
+                    {{ report.net_quantity|default:"Not Detected" }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    MRP
+                </div>
+
+                <div class="info-value">
+                    {{ report.mrp|default:"Not Detected" }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Manufacturing / Packing Date
+                </div>
+
+                <div class="info-value">
+                    {{ report.manufacturing_date|default:"Not Detected" }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Consumer Care
+                </div>
+
+                <div class="info-value">
+                    {{ report.consumer_care|default:"Not Detected" }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMPLIANCE SUMMARY -->
+    <div class="section">
+
+        <h2>Compliance Summary</h2>
+
+        <div class="compliance-summary">
+
+            <div class="summary-card">
+
+                <div class="summary-number">
+                    {{ report.score }}%
+                </div>
+
+                <div class="summary-label">
+                    Compliance Score
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-number">
+                    {{ report.violation_count }}
+                </div>
+
+                <div class="summary-label">
+                    Violations
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-number">
+                    {% if report.ocr_success %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </div>
+
+                <div class="summary-label">
+                    OCR Successful
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div>
+
+                    {% if report.status == "Compliant" %}
+
+                        <span class="status status-compliant">
+                            Compliant
+                        </span>
+
+                    {% elif report.status == "Partially Compliant" %}
+
+                        <span class="status status-partial">
+                            Partially Compliant
+                        </span>
+
+                    {% elif report.status == "Non-Compliant" %}
+
+                        <span class="status status-non">
+                            Non-Compliant
+                        </span>
+
+                    {% else %}
+
+                        <span class="status status-pending">
+                            {{ report.status }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="summary-label">
+                    Final Status
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- VIOLATIONS -->
+    <div class="section">
+
+        <h2>Violations / Issues Found</h2>
+
+        {% if report.violations %}
+
+            {% for violation in report.violations %}
+
+                <div class="violation">
+
+                    {% if violation.rule %}
+                        <strong>
+                            {{ violation.rule }}
+                        </strong>
+                        <br>
+                    {% endif %}
+
+                    {% if violation.message %}
+                        {{ violation.message }}
+
+                    {% elif violation.description %}
+                        {{ violation.description }}
+
+                    {% elif violation.reason %}
+                        {{ violation.reason }}
+
+                    {% else %}
+                        {{ violation }}
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="empty">
+                No violations detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- OCR TEXT -->
+    <div class="section">
+
+        <h2>OCR Extracted Text</h2>
+
+        {% if report.ocr_text %}
+
+            <div class="ocr-box">
+{{ report.ocr_text }}
+            </div>
+
+        {% else %}
+
+            <p class="empty">
+                No OCR text available.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- FINAL ACTIONS -->
+    <div class="section">
+
+        <h2>Report Actions</h2>
+
+        <div class="top-actions">
+
+            <a
+                href="{% url 'reports:download_pdf_specific' report.id %}"
+                class="btn btn-primary"
+            >
+                Download Compliance PDF
+            </a>
+
+            <a
+                href="{% url 'reports:history' %}"
+                class="btn btn-secondary"
+            >
+                Back to History
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="report-footer">
+
+        PackCheck AI | AI-assisted Packaged Commodity Compliance Inspection System
+
+        <br>
+
+        Smart India Hackathon
+
+    </div>
+
+
+    {% else %}
+
+    <!-- NO REPORT -->
+    <div class="section">
+
+        <h2>No Compliance Report Found</h2>
+
+        <p class="empty">
+            Please scan a product first to generate a compliance report.
+        </p>
+
+        <div class="top-actions">
+
+            <a
+                href="{% url 'scanner:upload' %}"
+                class="btn btn-primary"
+            >
+                Scan Product
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

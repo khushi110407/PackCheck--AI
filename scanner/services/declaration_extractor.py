@@ -1,81 +1,93 @@
 import re
 
 
+# =========================================================
+# CLEAN VALUE
+# =========================================================
+
 def clean_value(value):
-    """
-    Clean OCR extracted value.
-    """
     if not value:
         return None
 
-    value = str(value).strip()
+    value = str(value)
 
-    # Remove unwanted characters from beginning/end
-    value = re.sub(r"^[\s:;,\-]+", "", value)
-    value = re.sub(r"[\s:;,\-]+$", "", value)
+    value = value.replace("\n", " ")
+    value = value.replace("\r", " ")
+    value = value.replace("\t", " ")
 
-    # Remove multiple spaces
     value = re.sub(r"\s+", " ", value)
 
-    if len(value) < 2:
-        return None
+    value = value.strip(" :-|,.;")
 
-    return value
+    return value if value else None
 
+
+# =========================================================
+# NORMALIZE OCR TEXT
+# =========================================================
 
 def normalize_ocr_text(text):
-    """
-    Normalize common OCR mistakes.
-    """
+
     if not text:
         return ""
 
     text = str(text)
 
-    # Common OCR substitutions
     replacements = {
-        "M.R.P": "MRP",
         "M.R.P.": "MRP",
-        "m.r.p": "MRP",
-        "m.r.p.": "MRP",
+        "M.R.P": "MRP",
+        "M R P": "MRP",
 
-        "N.E.T": "NET",
-        "W.T.": "WT",
-
-        "P.K.D": "PKD",
         "P.K.D.": "PKD",
+        "P.K.D": "PKD",
 
-        "U.S.E": "USE",
-        "U.S.E.": "USE",
+        "M.F.G.": "MFG",
+        "M.F.G": "MFG",
 
-        "L.O.T": "LOT",
+        "M.F.D.": "MFD",
+        "M.F.D": "MFD",
+
+        "N.E.T.": "NET",
+        "N.E.T": "NET",
+
+        "W.T.": "WT",
+        "W.T": "WT",
+
         "L.O.T.": "LOT",
-
-        "C.O.D.E": "CODE",
-        "C.O.D.E.": "CODE",
+        "L.O.T": "LOT",
     }
 
     for old, new in replacements.items():
         text = text.replace(old, new)
 
-    return text
+    text = re.sub(r"\s+", " ", text)
 
+    return text.strip()
+
+
+# =========================================================
+# MANUFACTURER
+# =========================================================
 
 def extract_manufacturer(text):
-    """
-    Detect Manufacturer / Packer / Importer.
-    """
 
     patterns = [
-        r"manufactured\s*(?:by|&\s*packed\s*by)\s*[:\-]?\s*(.+)",
-        r"manufactured\s*(?:and\s*packed\s*by)\s*[:\-]?\s*(.+)",
-        r"manufactured\s*&\s*packed\s*by\s*[:\-]?\s*(.+)",
-        r"mfd\.?\s*by\s*[:\-]?\s*(.+)",
-        r"mfg\.?\s*by\s*[:\-]?\s*(.+)",
-        r"manufacturer\s*[:\-]?\s*(.+)",
-        r"packed\s*by\s*[:\-]?\s*(.+)",
-        r"packer\s*[:\-]?\s*(.+)",
-        r"importer\s*[:\-]?\s*(.+)",
+
+        r"manufactured\s+(?:for|by)\s*[:\-]?\s*(.{3,120})",
+
+        r"manufactured\s+and\s+packed\s+by\s*[:\-]?\s*(.{3,120})",
+
+        r"manufactured\s+and\s+marketed\s+by\s*[:\-]?\s*(.{3,120})",
+
+        r"mfd\.?\s*(?:by|for)?\s*[:\-]?\s*(.{3,120})",
+
+        r"mfg\.?\s*(?:by|for)?\s*[:\-]?\s*(.{3,120})",
+
+        r"manufacturer\s*[:\-]?\s*(.{3,120})",
+
+        r"packed\s+by\s*[:\-]?\s*(.{3,120})",
+
+        r"packer\s*[:\-]?\s*(.{3,120})",
     ]
 
     for pattern in patterns:
@@ -88,165 +100,178 @@ def extract_manufacturer(text):
 
         if match:
 
-            value = match.group(1)
-
-            # Stop at next common declaration
-            value = re.split(
-                r"\b(?:mrp|net\s*(?:weight|quantity)|pkd|mfg|mfd|use\s*by|consumer\s*care|helpline)\b",
-                value,
-                flags=re.IGNORECASE
-            )[0]
-
-            value = clean_value(value)
-
-            if value:
-                return value
-
-    return None
-
-
-def extract_net_quantity(text):
-    """
-    Detect Net Quantity / Net Weight.
-    """
-
-    patterns = [
-
-        # NET WEIGHT 600 g
-        r"net\s*(?:weight|wt)\s*[:\-]?\s*"
-        r"(\d+(?:\.\d+)?)\s*"
-        r"(kg|kgs|g|gm|gms|mg|l|ltr|litre|liter|ml)",
-
-        # NET QUANTITY 600 g
-        r"net\s*(?:quantity|qty)\s*[:\-]?\s*"
-        r"(\d+(?:\.\d+)?)\s*"
-        r"(kg|kgs|g|gm|gms|mg|l|ltr|litre|liter|ml)",
-
-        # NET WT 600g
-        r"net\s*wt\.?\s*[:\-]?\s*"
-        r"(\d+(?:\.\d+)?)\s*"
-        r"(kg|kgs|g|gm|gms|mg|l|ltr|litre|liter|ml)",
-
-        # quantity 600 g
-        r"(?:quantity|qty)\s*[:\-]?\s*"
-        r"(\d+(?:\.\d+)?)\s*"
-        r"(kg|kgs|g|gm|gms|mg|l|ltr|litre|liter|ml)",
-    ]
-
-    for pattern in patterns:
-
-        match = re.search(
-            pattern,
-            text,
-            re.IGNORECASE
-        )
-
-        if match:
-
-            number = match.group(1)
-            unit = match.group(2)
-
-            # Standardize units
-            unit_map = {
-                "kgs": "kg",
-                "gm": "g",
-                "gms": "g",
-                "ltr": "l",
-                "litre": "l",
-                "liter": "l",
-            }
-
-            unit = unit_map.get(
-                unit.lower(),
-                unit.lower()
+            value = clean_value(
+                match.group(1)
             )
 
-            return f"{number} {unit}"
+            if value:
+
+                value = re.split(
+                    r"\b(?:mrp|net|weight|quantity|pkd|mfd|mfg|use|best|consumer|customer|care|lot|machine|lic)\b",
+                    value,
+                    flags=re.IGNORECASE
+                )[0]
+
+                value = clean_value(value)
+
+                if value:
+                    return value
 
     return None
 
 
-def extract_mrp(text):
-    """
-    Detect Maximum Retail Price / MRP.
-    """
+# =========================================================
+# NET QUANTITY
+# =========================================================
+
+def extract_net_quantity(text):
 
     patterns = [
 
-        # MRP ₹10
-        r"\bmrp\b\s*[:\-]?\s*"
-        r"(?:rs\.?|₹|inr)?\s*"
-        r"(\d+(?:\.\d+)?)",
+        r"net\s*weight\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*(kg|kgs|g|gm|gms|mg|l|ltr|litre|liter|ml)\b",
 
-        # MRP Rs 10
-        r"\bmrp\b\s*[:\-]?\s*"
-        r"(?:rs\.?|inr)\s*"
-        r"(\d+(?:\.\d+)?)",
+        r"net\s*quantity\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*(kg|kgs|g|gm|gms|mg|l|ltr|litre|liter|ml)\b",
 
-        # Maximum Retail Price ₹10
-        r"maximum\s*retail\s*price\s*[:\-]?\s*"
-        r"(?:rs\.?|₹|inr)?\s*"
-        r"(\d+(?:\.\d+)?)",
+        r"(?:net|wet)\s*(?:weight|wt|quantity)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*(kg|kgs|g|gm|gms|mg|l|ltr|litre|liter|ml)\b",
 
-        # ₹10
-        r"₹\s*(\d+(?:\.\d+)?)",
+        r"net\s*weight\s*[:\-]?\s*(\d+(?:\.\d+)?)",
 
-        # Rs. 10
+    ]
+
+    for pattern in patterns:
+
+        match = re.search(
+            pattern,
+            text,
+            re.IGNORECASE
+        )
+
+        if match:
+
+            groups = match.groups()
+
+            if len(groups) >= 2:
+
+                number = groups[-2]
+                unit = groups[-1]
+
+                return f"{number} {unit}"
+
+            if len(groups) == 1:
+
+                return clean_value(
+                    groups[0]
+                )
+
+    # Fallback:
+    # Look around NET WEIGHT
+
+    match = re.search(
+        r"net\s+weight.{0,40}?(\d+(?:\.\d+)?)\s*(kg|g|gm|mg|ml|l)\b",
+        text,
+        re.IGNORECASE
+    )
+
+    if match:
+
+        return f"{match.group(1)} {match.group(2)}"
+
+    return None
+
+
+# =========================================================
+# MRP
+# =========================================================
+
+def extract_mrp(text):
+
+    patterns = [
+
+        r"\bmrp\b\s*[:\-]?\s*(?:rs\.?|inr)?\s*[₹]?\s*(\d+(?:\.\d+)?)",
+
+        r"maximum\s+retail\s+price\s*[:\-]?\s*(?:rs\.?|inr)?\s*[₹]?\s*(\d+(?:\.\d+)?)",
+
+        r"[₹]\s*(\d+(?:\.\d+)?)",
+
         r"\brs\.?\s*(\d+(?:\.\d+)?)",
     ]
 
     for pattern in patterns:
 
-        match = re.search(
+        for match in re.finditer(
             pattern,
             text,
             re.IGNORECASE
-        )
+        ):
 
-        if match:
+            value = match.group(1)
 
-            price = match.group(1)
+            try:
+                number = float(value)
+            except ValueError:
+                continue
 
-            return f"₹{price}"
+            start = max(
+                0,
+                match.start() - 30
+            )
+
+            end = min(
+                len(text),
+                match.end() + 40
+            )
+
+            nearby = text[start:end]
+
+            # Ignore nutritional values
+            if re.search(
+                r"per\s*(?:100\s*g|100g|g|kg|ml|l)",
+                nearby,
+                re.IGNORECASE
+            ):
+                continue
+
+            return f"₹{value}"
+
+    # OCR fallback:
+    # If "MRP" is nearby, search next number
+
+    match = re.search(
+        r"mrp.{0,30}?(\d+(?:\.\d+)?)",
+        text,
+        re.IGNORECASE
+    )
+
+    if match:
+
+        return f"₹{match.group(1)}"
 
     return None
 
 
-def extract_date(text):
-    """
-    Detect manufacturing / packing date.
+# =========================================================
+# MANUFACTURING DATE
+# =========================================================
 
-    Handles:
-    MFG 07/2026
-    MFD 07/2026
-    PKD 13/07/26
-    PKD 07/2026
-    Manufacturing Date 07/2026
-    """
+def extract_manufacturing_date(text):
 
     patterns = [
 
-        # MFG / MFD / PKD DD/MM/YYYY
-        r"\b(?:mfg|mfd|pkd|packed)\b"
-        r"\s*[:\-]?\s*"
-        r"(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})",
+        r"\bpkd\.?\s*[:\-]?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})",
 
-        # MFG / MFD / PKD MM/YYYY
-        r"\b(?:mfg|mfd|pkd|packed)\b"
-        r"\s*[:\-]?\s*"
-        r"(\d{1,2}[\/\-]\d{4})",
+        r"\bpkd\.?\s*[:\-]?\s*(\d{1,2}[\/\-]\d{2,4})",
 
-        # Manufacturing Date
-        r"manufacturing\s*date\s*[:\-]?\s*"
-        r"(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})",
+        r"\bmfg\.?\s*[:\-]?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})",
 
-        # Manufacturing Date MM/YYYY
-        r"manufacturing\s*date\s*[:\-]?\s*"
-        r"(\d{1,2}[\/\-]\d{4})",
+        r"\bmfg\.?\s*[:\-]?\s*(\d{1,2}[\/\-]\d{2,4})",
 
-        # Month Year
-        r"(?:mfg|mfd|manufacturing)\s*[:\-]?\s*"
-        r"([A-Za-z]{3,9}\s+\d{4})",
+        r"\bmfd\.?\s*[:\-]?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})",
+
+        r"\bmfd\.?\s*[:\-]?\s*(\d{1,2}[\/\-]\d{2,4})",
+
+        r"manufacturing\s+date\s*[:\-]?\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})",
+
+        r"manufacturing\s+date\s*[:\-]?\s*(\d{1,2}[\/\-]\d{2,4})",
     ]
 
     for pattern in patterns:
@@ -258,6 +283,7 @@ def extract_date(text):
         )
 
         if match:
+
             return clean_value(
                 match.group(1)
             )
@@ -265,24 +291,23 @@ def extract_date(text):
     return None
 
 
+# =========================================================
+# CONSUMER CARE
+# =========================================================
+
 def extract_consumer_care(text):
-    """
-    Detect Consumer Care / Customer Care / Helpline.
-    """
 
     patterns = [
 
-        r"consumer\s*care\s*[:\-]?\s*(.+)",
+        r"consumer\s+care\s*[:\-]?\s*(.{5,100})",
 
-        r"customer\s*care\s*[:\-]?\s*(.+)",
+        r"customer\s+care\s*[:\-]?\s*(.{5,100})",
 
-        r"consumer\s*complaint\s*[:\-]?\s*(.+)",
+        r"consumer\s+complaint\s*[:\-]?\s*(.{5,100})",
 
-        r"helpline\s*[:\-]?\s*(.+)",
+        r"helpline\s*[:\-]?\s*(.{5,100})",
 
-        r"toll\s*free\s*[:\-]?\s*(.+)",
-
-        r"contact\s*us\s*[:\-]?\s*(.+)",
+        r"toll\s*free\s*[:\-]?\s*(.{5,100})",
     ]
 
     for pattern in patterns:
@@ -295,68 +320,106 @@ def extract_consumer_care(text):
 
         if match:
 
-            value = match.group(1)
-
-            # Stop at next declaration
-            value = re.split(
-                r"\b(?:mrp|net\s*(?:weight|quantity)|pkd|mfg|mfd|manufactured)\b",
-                value,
-                flags=re.IGNORECASE
-            )[0]
-
-            value = clean_value(value)
+            value = clean_value(
+                match.group(1)
+            )
 
             if value:
-                return value
+
+                value = re.split(
+                    r"\b(?:mrp|net|weight|pkd|mfd|mfg|lot|machine|manufactured|packed|lic)\b",
+                    value,
+                    flags=re.IGNORECASE
+                )[0]
+
+                value = clean_value(
+                    value
+                )
+
+                if value:
+                    return value
+
+    # Phone number fallback
+
+    phone_patterns = [
+
+        r"\b1800[\s\-]?\d{3}[\s\-]?\d{4}\b",
+
+        r"\b\d{10}\b",
+
+        r"\b\d{4}[\s\-]\d{3}[\s\-]\d{3}\b",
+    ]
+
+    for pattern in phone_patterns:
+
+        match = re.search(
+            pattern,
+            text
+        )
+
+        if match:
+
+            return clean_value(
+                match.group(0)
+            )
 
     return None
 
 
+# =========================================================
+# MAIN DECLARATION EXTRACTION
+# =========================================================
+
 def extract_declarations(text):
-    """
-    Main declaration extraction function.
 
-    Returns:
-        manufacturer
-        net_quantity
-        mrp
-        manufacturing_date
-        consumer_care
-    """
-
-    result = {
-        "manufacturer": None,
-        "net_quantity": None,
-        "mrp": None,
-        "manufacturing_date": None,
-        "consumer_care": None,
-    }
+    text = normalize_ocr_text(
+        text
+    )
 
     if not text:
-        return result
 
-    # Normalize OCR text
-    text = normalize_ocr_text(text)
+        return {
+            "manufacturer": None,
+            "net_quantity": None,
+            "mrp": None,
+            "manufacturing_date": None,
+            "consumer_care": None,
+        }
 
-    # Extract fields
-    result["manufacturer"] = extract_manufacturer(
+    manufacturer = extract_manufacturer(
         text
     )
 
-    result["net_quantity"] = extract_net_quantity(
+    net_quantity = extract_net_quantity(
         text
     )
 
-    result["mrp"] = extract_mrp(
+    mrp = extract_mrp(
         text
     )
 
-    result["manufacturing_date"] = extract_date(
+    manufacturing_date = extract_manufacturing_date(
         text
     )
 
-    result["consumer_care"] = extract_consumer_care(
+    consumer_care = extract_consumer_care(
         text
     )
 
-    return result
+    return {
+
+        "manufacturer":
+            manufacturer,
+
+        "net_quantity":
+            net_quantity,
+
+        "mrp":
+            mrp,
+
+        "manufacturing_date":
+            manufacturing_date,
+
+        "consumer_care":
+            consumer_care,
+    }
