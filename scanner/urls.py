@@ -4,11 +4,7 @@ from . import views
 app_name = 'scanner'
 
 urlpatterns = [
-    path(
-        '',
-        views.upload_product,
-        name='upload'
-    ),
+    path('', views.upload_product, name='upload'),
 
     path(
         'result/<int:scan_id>/',

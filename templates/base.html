@@ -13,18 +13,24 @@
     >
 
     <title>
+
         {% block title %}
-        PackCheck AI
+            PackCheck AI
         {% endblock %}
+
     </title>
 
-    <!-- Main CSS -->
+
+    <!-- MAIN CSS -->
+
     <link
         rel="stylesheet"
         href="{% static 'css/style.css' %}"
     >
 
-    <!-- Page Specific CSS -->
+
+    <!-- PAGE SPECIFIC CSS -->
+
     {% block extra_css %}
     {% endblock %}
 
@@ -33,13 +39,15 @@
 
 <body>
 
-<!-- =====================================================
+
+<!-- =========================
      NAVBAR
-===================================================== -->
+========================== -->
 
 <header class="navbar">
 
     <div class="container nav-content">
+
 
         <!-- LOGO -->
 
@@ -47,15 +55,16 @@
             href="{% url 'dashboard:dashboard' %}"
             class="logo"
         >
-            ⚖️ PackCheck <span>AI</span>
+
+            ⚖️ PackCheck
+            <span>AI</span>
+
         </a>
 
 
         <!-- NAVIGATION -->
 
         <nav>
-
-            <!-- HOME -->
 
             <a
                 href="{% url 'dashboard:dashboard' %}"
@@ -64,16 +73,12 @@
             </a>
 
 
-            <!-- DASHBOARD -->
-
             <a
                 href="{% url 'dashboard:dashboard' %}"
             >
                 Dashboard
             </a>
 
-
-            <!-- SCAN PRODUCT -->
 
             <a
                 href="{% url 'scanner:upload' %}"
@@ -82,16 +87,12 @@
             </a>
 
 
-            <!-- HISTORY -->
-
             <a
-                href="{% url 'scanner:upload' %}"
+                href="{% url 'reports:history' %}"
             >
                 History
             </a>
 
-
-            <!-- LOGIN -->
 
             <a
                 href="{% url 'accounts:login' %}"
@@ -106,22 +107,23 @@
 </header>
 
 
-<!-- =====================================================
+
+<!-- =========================
      MAIN CONTENT
-===================================================== -->
+========================== -->
 
 <main>
 
     {% block content %}
-
     {% endblock %}
 
 </main>
 
 
-<!-- =====================================================
+
+<!-- =========================
      FOOTER
-===================================================== -->
+========================== -->
 
 <footer>
 
@@ -151,6 +153,15 @@
     </div>
 
 </footer>
+
+
+
+<!-- =========================
+     PAGE JAVASCRIPT
+========================== -->
+
+{% block extra_js %}
+{% endblock %}
 
 
 </body>

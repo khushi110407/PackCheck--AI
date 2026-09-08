@@ -2,14 +2,27 @@
 
 {% load static %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+{% block title %}
+Dashboard | PackCheck AI
 {% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/dashboard.css' %}"
+>
+
+{% endblock %}
+
 
 
 {% block content %}
 
 <section class="dashboard">
+
 
     <!-- =========================
          HEADER
@@ -18,20 +31,38 @@
     <div class="dashboard-header">
 
         <div>
-            <p class="eyebrow">OVERVIEW</p>
 
-            <h1>Compliance Dashboard</h1>
+            <p class="eyebrow">
+                OVERVIEW
+            </p>
+
+
+            <h1>
+                Compliance Dashboard
+            </h1>
+
 
             <p class="subtitle">
-                Monitor product inspections and compliance activities.
+
+                Monitor product inspections
+                and compliance activities.
+
             </p>
+
         </div>
 
-        <a href="{% url 'scanner:upload' %}" class="btn">
+
+        <a
+            href="{% url 'scanner:upload' %}"
+            class="btn"
+        >
+
             + New Inspection
+
         </a>
 
     </div>
+
 
 
     <!-- =========================
@@ -40,18 +71,30 @@
 
     <div class="stats-grid">
 
+
+        <!-- TOTAL SCANS -->
+
         <div class="stat-card">
 
             <div class="stat-icon">
                 📦
             </div>
 
-            <p>Total Scans</p>
 
-            <h2>{{ total_scans }}</h2>
+            <p>
+                Total Scans
+            </p>
+
+
+            <h2>
+                {{ total_scans }}
+            </h2>
 
         </div>
 
+
+
+        <!-- COMPLIANT -->
 
         <div class="stat-card">
 
@@ -59,12 +102,21 @@
                 ✓
             </div>
 
-            <p>Compliant</p>
 
-            <h2>{{ compliant }}</h2>
+            <p>
+                Compliant
+            </p>
+
+
+            <h2>
+                {{ compliant }}
+            </h2>
 
         </div>
 
+
+
+        <!-- REVIEW REQUIRED -->
 
         <div class="stat-card">
 
@@ -72,12 +124,21 @@
                 ⚠
             </div>
 
-            <p>Review Required</p>
 
-            <h2>{{ review_required }}</h2>
+            <p>
+                Review Required
+            </p>
+
+
+            <h2>
+                {{ review_required }}
+            </h2>
 
         </div>
 
+
+
+        <!-- VIOLATIONS -->
 
         <div class="stat-card">
 
@@ -85,13 +146,75 @@
                 !
             </div>
 
-            <p>Violations</p>
 
-            <h2>{{ violations }}</h2>
+            <p>
+                Violations
+            </p>
+
+
+            <h2>
+                {{ violations }}
+            </h2>
 
         </div>
 
     </div>
+
+
+
+    <!-- =========================
+         COMPLIANCE OVERVIEW
+    ========================== -->
+
+    <section class="recent-section">
+
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Compliance Overview
+                </h2>
+
+
+                <p>
+                    Overall compliance performance
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="inspection-card">
+
+            <div class="empty-icon">
+                📊
+            </div>
+
+
+            <h3>
+
+                {{ compliance_percentage }}%
+                Compliance
+
+            </h3>
+
+
+            <p>
+
+                Based on
+                {{ total_scans }}
+                product inspection(s).
+
+            </p>
+
+        </div>
+
+    </section>
+
 
 
     <!-- =========================
@@ -99,6 +222,7 @@
     ========================== -->
 
     <section class="recent-section">
+
 
         <div class="section-heading">
 
@@ -108,44 +232,161 @@
                     Recent Inspections
                 </h2>
 
+
                 <p>
-                    Latest packaged commodity compliance checks
+                    Latest packaged commodity
+                    compliance checks
                 </p>
 
             </div>
 
-            <a href="{% url 'scanner:upload' %}">
-                View All →
-            </a>
-
-        </div>
-
-
-        <div class="inspection-card">
-
-            <div class="empty-icon">
-                📦
-            </div>
-
-            <h3>
-                No inspections yet
-            </h3>
-
-            <p>
-                Start your first product scan to check
-                packaged commodity compliance.
-            </p>
 
             <a
-                href="{% url 'scanner:upload' %}"
-                class="btn"
+                href="{% url 'reports:history' %}"
             >
-                Scan Your First Product
+
+                View All →
+
             </a>
 
         </div>
 
+
+
+        {% if recent_scans %}
+
+
+            <div class="inspection-list">
+
+
+                {% for scan in recent_scans %}
+
+
+                    <div class="inspection-card">
+
+
+                        <!-- PRODUCT INFO -->
+
+                        <div>
+
+                            <h3>
+
+                                📦
+                                {{ scan.product_name }}
+
+                            </h3>
+
+
+                            <p>
+
+                                Category:
+                                {{ scan.category }}
+
+                            </p>
+
+
+                            <p>
+
+                                Scanned:
+
+                                {{ scan.scanned_at|date:"d M Y, h:i A" }}
+
+                            </p>
+
+                        </div>
+
+
+
+                        <!-- RESULT -->
+
+                        <div>
+
+                            <strong>
+
+                                {{ scan.score }}%
+
+                            </strong>
+
+
+                            <p>
+
+                                {{ scan.status }}
+
+                            </p>
+
+
+                            <p>
+
+                                {{ scan.violation_count }}
+                                violation(s)
+
+                            </p>
+
+
+                            <a
+                                href="{% url 'scanner:result' scan.id %}"
+                                class="btn"
+                            >
+
+                                View Result
+
+                            </a>
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- NO DATA -->
+
+            <div class="inspection-card">
+
+                <div class="empty-icon">
+                    📦
+                </div>
+
+
+                <h3>
+                    No inspections yet
+                </h3>
+
+
+                <p>
+
+                    Start your first product scan
+                    to check packaged commodity
+                    compliance.
+
+                </p>
+
+
+                <a
+                    href="{% url 'scanner:upload' %}"
+                    class="btn"
+                >
+
+                    Scan Your First Product
+
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
     </section>
+
 
 
     <!-- =========================
@@ -154,9 +395,12 @@
 
     <section class="how-section">
 
+
         <h2>
             How PackCheck AI Works
         </h2>
+
+
 
         <div class="steps">
 
@@ -169,15 +413,21 @@
                     1
                 </div>
 
+
                 <h3>
                     Upload Product
                 </h3>
 
+
                 <p>
-                    Upload an image of the packaged commodity.
+
+                    Upload an image of the
+                    packaged commodity.
+
                 </p>
 
             </div>
+
 
 
             <!-- STEP 2 -->
@@ -188,15 +438,21 @@
                     2
                 </div>
 
+
                 <h3>
                     AI Analysis
                 </h3>
 
+
                 <p>
-                    OCR and AI analyze mandatory declarations.
+
+                    OCR analyzes mandatory
+                    declarations.
+
                 </p>
 
             </div>
+
 
 
             <!-- STEP 3 -->
@@ -207,15 +463,21 @@
                     3
                 </div>
 
+
                 <h3>
                     Compliance Check
                 </h3>
 
+
                 <p>
-                    Rules are checked against Legal Metrology requirements.
+
+                    Rules are checked against
+                    Legal Metrology requirements.
+
                 </p>
 
             </div>
+
 
 
             <!-- STEP 4 -->
@@ -226,19 +488,27 @@
                     4
                 </div>
 
+
                 <h3>
                     Get Report
                 </h3>
 
+
                 <p>
-                    View violations and generate a compliance report.
+
+                    View violations and generate
+                    a compliance report.
+
                 </p>
 
             </div>
 
+
         </div>
 
+
     </section>
+
 
 </section>
 

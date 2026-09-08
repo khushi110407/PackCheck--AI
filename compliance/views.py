@@ -1,39 +1,47 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
-from .models import ComplianceCheck
+from scanner.models import ProductScan
 
 
 def violations(request):
 
-    checks = ComplianceCheck.objects.filter(
-        status='NON_COMPLIANT'
-    ).order_by('-checked_at')
+    scan = ProductScan.objects.order_by(
+        '-scanned_at'
+    ).first()
+
+    compliance_result = {}
+
+    if scan:
+        compliance_result = request.session.get(
+            f'compliance_{scan.id}',
+            {}
+        )
+
+    violations_list = compliance_result.get(
+        'violations',
+        []
+    )
+
+    score = compliance_result.get(
+        'score',
+        0
+    )
+
+    status = compliance_result.get(
+        'status',
+        'Analysis Pending'
+    )
 
     context = {
-        'checks': checks,
-        'total_violations': checks.count(),
+        'scan': scan,
+        'violations': violations_list,
+        'total_violations': len(violations_list),
+        'score': score,
+        'status': status,
     }
 
     return render(
         request,
         'compliance/violations.html',
-        context
-    )
-
-
-def details(request, pk):
-
-    check = get_object_or_404(
-        ComplianceCheck,
-        pk=pk
-    )
-
-    context = {
-        'check': check,
-    }
-
-    return render(
-        request,
-        'compliance/details.html',
         context
     )

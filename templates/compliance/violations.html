@@ -1,219 +1,499 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}
-Violations | PackCheck AI
-{% endblock %}
+{% block title %}Compliance Violations | PackCheck AI{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/violations.css' %}">
+
+<style>
+
+.page-section {
+    padding: 50px 0 80px;
+    background: #f1f5f9;
+    min-height: 80vh;
+}
+
+.page-section .container {
+    width: 90%;
+    max-width: 1180px;
+    margin: auto;
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header span {
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.page-header h1 {
+    margin: 8px 0;
+    font-size: 38px;
+    color: #0f172a;
+}
+
+.page-header p {
+    color: #64748b;
+    font-size: 16px;
+}
+
+
+/* CARD */
+
+.content-card {
+    background: white;
+    border: 1px solid #dbe3ef;
+    border-radius: 18px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(15,23,42,0.07);
+}
+
+.content-card h2 {
+    color: #0f172a;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+
+/* STATISTICS */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.stat-card {
+    background: #f8fafc;
+    border: 1px solid #dbe3ef;
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 40px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.stat-label {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+
+/* STATUS */
+
+.status-box {
+    margin-top: 30px;
+    padding: 35px;
+    text-align: center;
+    border-radius: 16px;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+}
+
+.status-icon {
+    font-size: 48px;
+}
+
+.status-box h2 {
+    color: #991b1b;
+    margin: 10px 0;
+}
+
+.status-box p {
+    color: #64748b;
+}
+
+
+/* VIOLATIONS */
+
+.violations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.violation-card {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-left: 5px solid #f97316;
+    border-radius: 14px;
+    padding: 22px;
+}
+
+.violation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.violation-header h3 {
+    margin: 0;
+    color: #9a3412;
+    font-size: 19px;
+}
+
+.violation-header span {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 6px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.violation-card p {
+    color: #475569;
+    line-height: 1.6;
+}
+
+.violation-details {
+    margin-top: 8px;
+    color: #475569;
+    font-size: 14px;
+}
+
+.violation-details strong {
+    color: #0f172a;
+}
+
+
+/* EMPTY */
+
+.empty-state {
+    padding: 50px 25px;
+    text-align: center;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 16px;
+}
+
+.empty-icon {
+    font-size: 55px;
+}
+
+.empty-state h2 {
+    color: #166534;
+}
+
+
+/* BUTTONS */
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.action-button {
+    display: inline-block;
+    padding: 14px 25px;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white !important;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.action-button:hover {
+    background: #1d4ed8;
+}
+
+.action-button.secondary {
+    background: white;
+    color: #2563eb !important;
+    border: 1px solid #2563eb;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .violation-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .action-button {
+        text-align: center;
+    }
+
+}
+
+</style>
+
 {% endblock %}
+
 
 {% block content %}
 
 <section class="page-section">
 
-    <div class="container">
-
-        <!-- PAGE HEADER -->
-        <div class="page-header">
-
-            <span>COMPLIANCE ANALYSIS</span>
-
-            <h1>Detected Violations</h1>
-
-            <p>
-                Review compliance issues detected during product inspection.
-            </p>
-
-        </div>
+<div class="container">
 
 
-        <!-- MAIN CARD -->
-        <div class="violations-card">
+    <!-- HEADER -->
 
-            <h2>⚠️ Compliance Violations</h2>
+    <div class="page-header">
+
+        <span>COMPLIANCE ANALYSIS</span>
+
+        <h1>⚠️ Compliance Violations</h1>
+
+        <p>
+            Review compliance issues detected during
+            product inspection.
+        </p>
+
+    </div>
 
 
-            <!-- SUMMARY -->
-            <div class="violation-summary">
+    <!-- SUMMARY -->
 
-                <div class="summary-box">
+    <div class="content-card">
 
-                    <span class="summary-number">
-                        {{ violations|length }}
-                    </span>
+        <h2>📊 Compliance Summary</h2>
 
-                    <span class="summary-label">
-                        Total Violations
-                    </span>
+        <div class="stats-grid">
 
+
+            <div class="stat-card">
+
+                <div class="stat-number">
+                    {{ total_violations }}
                 </div>
 
-
-                <div class="summary-box">
-
-                    <span class="summary-number">
-                        {% if violations %}
-                            {{ violations|length }}
-                        {% else %}
-                            0
-                        {% endif %}
-                    </span>
-
-                    <span class="summary-label">
-                        Issues Found
-                    </span>
-
-                </div>
-
-
-                <div class="summary-box">
-
-                    <span class="summary-number">
-                        {% if violations %}
-                            Review
-                        {% else %}
-                            Pass
-                        {% endif %}
-                    </span>
-
-                    <span class="summary-label">
-                        Compliance Status
-                    </span>
-
+                <div class="stat-label">
+                    Total Violations
                 </div>
 
             </div>
 
 
-            <!-- VIOLATIONS -->
-            {% if violations %}
+            <div class="stat-card">
 
-                <div class="violation-list">
-
-                    {% for violation in violations %}
-
-                    <div class="violation-item">
-
-                        <div class="violation-title">
-
-                            <span class="violation-icon">
-                                ⚠️
-                            </span>
-
-                            <h3>
-                                {% if violation.rule %}
-                                    {{ violation.rule }}
-                                {% elif violation.violation_type %}
-                                    {{ violation.violation_type }}
-                                {% else %}
-                                    Compliance Violation
-                                {% endif %}
-                            </h3>
-
-                        </div>
-
-
-                        {% if violation.description %}
-
-                        <p>
-                            <span class="violation-label">
-                                Description:
-                            </span>
-
-                            {{ violation.description }}
-                        </p>
-
-                        {% endif %}
-
-
-                        {% if violation.declaration %}
-
-                        <p>
-                            <span class="violation-label">
-                                Declaration:
-                            </span>
-
-                            {{ violation.declaration }}
-                        </p>
-
-                        {% endif %}
-
-
-                        {% if violation.severity %}
-
-                        <p>
-                            <span class="violation-label">
-                                Severity:
-                            </span>
-
-                            {{ violation.severity }}
-                        </p>
-
-                        {% endif %}
-
-                    </div>
-
-                    {% endfor %}
-
+                <div class="stat-number">
+                    {{ total_violations }}
                 </div>
+
+                <div class="stat-label">
+                    Issues Found
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-number">
+                    {{ score }}%
+                </div>
+
+                <div class="stat-label">
+                    Compliance Score
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="status-box">
+
+            {% if status == "Compliant" %}
+
+                <div class="status-icon">✅</div>
+
+                <h2>Product is Compliant</h2>
+
+                <p>
+                    No compliance violations were detected.
+                </p>
+
+
+            {% elif status == "Partially Compliant" %}
+
+                <div class="status-icon">⚠️</div>
+
+                <h2>Partially Compliant</h2>
+
+                <p>
+                    Some mandatory declarations require
+                    review or correction.
+                </p>
+
+
+            {% elif status == "Non-Compliant" %}
+
+                <div class="status-icon">❌</div>
+
+                <h2>Non-Compliant</h2>
+
+                <p>
+                    Compliance violations were detected
+                    in the product label.
+                </p>
 
 
             {% else %}
 
-                <!-- NO VIOLATIONS -->
-                <div class="no-violations">
+                <div class="status-icon">🔍</div>
 
-                    <div class="no-violations-icon">
-                        ✅
-                    </div>
+                <h2>Analysis Pending</h2>
 
-                    <h3>
-                        No Violations Detected
-                    </h3>
-
-                    <p>
-                        The inspection did not find any compliance violations
-                        in the available assessment data.
-                    </p>
-
-                </div>
+                <p>
+                    No compliance assessment is available.
+                </p>
 
             {% endif %}
-
-
-            <!-- ACTION BUTTONS -->
-            <div class="violation-actions">
-
-                <a
-                    href="{% url 'scanner:upload' %}"
-                    class="violation-button"
-                >
-                    🔍 Scan Another Product
-                </a>
-
-
-                <a
-                    href="{% url 'reports:report' %}"
-                    class="violation-button"
-                >
-                    📄 Generate Report
-                </a>
-
-
-                <a
-                    href="{% url 'dashboard:dashboard' %}"
-                    class="violation-button secondary"
-                >
-                    🏠 Dashboard
-                </a>
-
-            </div>
 
         </div>
 
     </div>
+
+
+    <!-- VIOLATIONS -->
+
+    <div class="content-card">
+
+        <h2>🚨 Detected Violations</h2>
+
+
+        {% if violations %}
+
+            <div class="violations-list">
+
+                {% for violation in violations %}
+
+                    <div class="violation-card">
+
+                        <div class="violation-header">
+
+                            <h3>
+                                {{ violation.violation_type }}
+                            </h3>
+
+                            <span>
+                                {{ violation.severity }}
+                            </span>
+
+                        </div>
+
+
+                        <p>
+                            {{ violation.description }}
+                        </p>
+
+
+                        <div class="violation-details">
+
+                            <strong>
+                                Declaration:
+                            </strong>
+
+                            {{ violation.declaration }}
+
+                        </div>
+
+
+                        <div class="violation-details">
+
+                            <strong>
+                                Rule:
+                            </strong>
+
+                            {{ violation.rule }}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    ✅
+                </div>
+
+                <h2>
+                    No Violations Detected
+                </h2>
+
+                <p>
+                    The current product assessment did not
+                    identify any configured compliance violations.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="action-buttons">
+
+        <a
+            href="{% url 'scanner:upload' %}"
+            class="action-button"
+        >
+            🔍 Scan Another Product
+        </a>
+
+
+        <a
+            href="{% url 'reports:report' %}"
+            class="action-button"
+        >
+            📄 Generate Report
+        </a>
+
+
+        <a
+            href="{% url 'dashboard:dashboard' %}"
+            class="action-button secondary"
+        >
+            🏠 Dashboard
+        </a>
+
+    </div>
+
+
+</div>
 
 </section>
 

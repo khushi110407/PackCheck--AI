@@ -1,122 +1,196 @@
-from .rules import get_all_rules
+import re
 
 
-def check_compliance(extracted_text):
-    """
-    Check mandatory declarations in extracted OCR text.
-    """
+# Mandatory declarations for a basic packaged-commodity check.
+# These are the fields our prototype will validate.
+MANDATORY_FIELDS = {
+    "manufacturer": {
+        "label": "Manufacturer / Packer / Importer",
+        "severity": "High",
+        "rule": "Mandatory declaration",
+    },
+    "net_quantity": {
+        "label": "Net Quantity",
+        "severity": "High",
+        "rule": "Mandatory declaration",
+    },
+    "mrp": {
+        "label": "MRP",
+        "severity": "High",
+        "rule": "MRP declaration",
+    },
+    "manufacturing_date": {
+        "label": "Month & Year of Manufacture",
+        "severity": "Medium",
+        "rule": "Date declaration",
+    },
+    "consumer_care": {
+        "label": "Consumer Care Details",
+        "severity": "Medium",
+        "rule": "Consumer care declaration",
+    },
+}
 
-    text = extracted_text.lower()
 
-    results = []
+def is_valid_mrp(value):
+    """Check whether MRP contains a numeric price."""
+    if not value:
+        return False
 
-    found_count = 0
+    value = str(value)
 
-    for rule in get_all_rules():
+    pattern = r"(₹|rs\.?|inr)?\s*\d+(?:\.\d+)?"
 
-        code = rule['code']
+    return bool(re.search(pattern, value, re.IGNORECASE))
 
-        found = False
 
-        if code == 'MANUFACTURER_DETAILS':
+def is_valid_quantity(value):
+    """Check whether net quantity contains a number and valid unit."""
+    if not value:
+        return False
 
-            keywords = [
-                'manufactured by',
-                'manufactured',
-                'packed by',
-                'imported by',
-                'manufacturer',
-                'packer',
-                'importer',
-            ]
+    value = str(value)
 
-            found = any(
-                keyword in text
-                for keyword in keywords
-            )
-
-        elif code == 'NET_QUANTITY':
-
-            keywords = [
-                'net quantity',
-                'net wt',
-                'net weight',
-                'quantity',
-            ]
-
-            found = any(
-                keyword in text
-                for keyword in keywords
-            )
-
-        elif code == 'MRP':
-
-            keywords = [
-                'mrp',
-                'maximum retail price',
-                'retail price',
-            ]
-
-            found = any(
-                keyword in text
-                for keyword in keywords
-            )
-
-        elif code == 'PACKING_DATE':
-
-            keywords = [
-                'month',
-                'year',
-                'mfg',
-                'mfd',
-                'manufacturing date',
-                'packed on',
-                'date of packing',
-            ]
-
-            found = any(
-                keyword in text
-                for keyword in keywords
-            )
-
-        elif code == 'CONSUMER_CARE':
-
-            keywords = [
-                'consumer care',
-                'customer care',
-                'helpline',
-                'toll free',
-                'contact us',
-            ]
-
-            found = any(
-                keyword in text
-                for keyword in keywords
-            )
-
-        if found:
-            found_count += 1
-
-        results.append({
-            'code': code,
-            'name': rule['name'],
-            'description': rule['description'],
-            'found': found,
-            'status': 'PASS' if found else 'FAIL',
-        })
-
-    total_rules = len(get_all_rules())
-
-    score = (
-        (found_count / total_rules) * 100
-        if total_rules
-        else 0
+    pattern = (
+        r"\d+(?:\.\d+)?\s*"
+        r"(kg|g|gm|mg|l|litre|liter|ml)"
     )
 
+    return bool(re.search(pattern, value, re.IGNORECASE))
+
+
+def check_field(field_name, value):
+    """
+    Validate one extracted declaration.
+    Returns a violation dictionary if invalid, otherwise None.
+    """
+
+    field_info = MANDATORY_FIELDS.get(field_name)
+
+    if not field_info:
+        return None
+
+    # Missing value
+    if value is None or str(value).strip() == "":
+        return {
+            "rule": field_info["rule"],
+            "violation_type": "Missing Declaration",
+            "description": (
+                f"{field_info['label']} was not detected "
+                "in the product label."
+            ),
+            "declaration": field_info["label"],
+            "severity": field_info["severity"],
+        }
+
+    # Field-specific validation
+    if field_name == "mrp":
+        if not is_valid_mrp(value):
+            return {
+                "rule": field_info["rule"],
+                "violation_type": "Invalid MRP Format",
+                "description": (
+                    "MRP was detected, but the price format "
+                    "could not be validated."
+                ),
+                "declaration": field_info["label"],
+                "severity": field_info["severity"],
+            }
+
+    if field_name == "net_quantity":
+        if not is_valid_quantity(value):
+            return {
+                "rule": field_info["rule"],
+                "violation_type": "Invalid Quantity Format",
+                "description": (
+                    "Net quantity was detected, but the "
+                    "quantity/unit format is invalid."
+                ),
+                "declaration": field_info["label"],
+                "severity": field_info["severity"],
+            }
+
+    return None
+
+
+def calculate_score(total_fields, violations):
+    """
+    Calculate a simple prototype compliance score.
+    """
+
+    if total_fields == 0:
+        return 0
+
+    violation_count = len(violations)
+
+    score = 100 - (
+        (violation_count / total_fields) * 100
+    )
+
+    return round(max(0, score))
+
+
+def get_status(score):
+    """Convert score into compliance status."""
+
+    if score >= 90:
+        return "Compliant"
+
+    if score >= 60:
+        return "Partially Compliant"
+
+    return "Non-Compliant"
+
+
+def run_rule_engine(declarations):
+    """
+    Main Legal Metrology compliance rule engine.
+
+    Input:
+        declarations = {
+            "manufacturer": "...",
+            "net_quantity": "...",
+            "mrp": "...",
+            "manufacturing_date": "...",
+            "consumer_care": "..."
+        }
+
+    Output:
+        violations
+        score
+        status
+    """
+
+    if not declarations:
+        declarations = {}
+
+    violations = []
+
+    for field_name in MANDATORY_FIELDS:
+        value = declarations.get(field_name)
+
+        violation = check_field(
+            field_name,
+            value
+        )
+
+        if violation:
+            violations.append(violation)
+
+    total_fields = len(MANDATORY_FIELDS)
+
+    score = calculate_score(
+        total_fields,
+        violations
+    )
+
+    status = get_status(score)
+
     return {
-        'results': results,
-        'score': round(score, 2),
-        'found_count': found_count,
-        'total_rules': total_rules,
-        'compliant': found_count == total_rules,
+        "total_fields": total_fields,
+        "checked_fields": total_fields - len(violations),
+        "violations": violations,
+        "violation_count": len(violations),
+        "score": score,
+        "status": status,
     }

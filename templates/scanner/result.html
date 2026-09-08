@@ -12,89 +12,227 @@
 <section class="page-section">
     <div class="container">
 
-        <!-- Header -->
         <div class="page-header">
             <span>AI ANALYSIS RESULT</span>
             <h1>Product Compliance Result</h1>
-            <p>PackCheck AI scanned your product image using OCR.</p>
+            <p>
+                PackCheck AI analyzed the uploaded product using OCR
+                and rule-based compliance checking.
+            </p>
         </div>
 
-        <!-- Product Information -->
+
+        <!-- PRODUCT INFORMATION -->
+
         <div class="content-card">
+
             <h3>📦 Product Information</h3>
 
             <div class="info-grid">
 
                 <div class="info-item">
                     <strong>Product Name</strong>
-                    <span>{{ scan.product_name|default:"Not Provided" }}</span>
+                    <span>
+                        {{ scan.product_name|default:"Not Provided" }}
+                    </span>
                 </div>
 
                 <div class="info-item">
                     <strong>Category</strong>
-                    <span>{{ scan.category|default:"Not Provided" }}</span>
+                    <span>
+                        {{ scan.category|default:"Not Provided" }}
+                    </span>
                 </div>
 
                 <div class="info-item">
                     <strong>Scan Date</strong>
-                    <span>{{ scan.scanned_at|date:"d M Y, h:i A" }}</span>
+                    <span>
+                        {{ scan.scanned_at|date:"d M Y, h:i A" }}
+                    </span>
                 </div>
 
             </div>
+
         </div>
 
-        <!-- Product Image -->
+
+        <!-- PRODUCT IMAGE -->
+
         {% if scan.product_image %}
+
         <div class="content-card">
+
             <h3>🖼️ Uploaded Product Image</h3>
 
             <div class="product-image-box">
+
                 <img
                     src="{{ scan.product_image.url }}"
                     alt="Product Image"
                 >
+
             </div>
+
         </div>
+
         {% endif %}
 
-        <!-- OCR Result -->
+
+        <!-- OCR RESULT -->
+
         <div class="content-card">
 
             <div class="section-heading">
+
                 <div>
-                    <span class="small-label">TEXT EXTRACTION</span>
+
+                    <span class="small-label">
+                        TEXT EXTRACTION
+                    </span>
+
                     <h3>🔍 OCR Extracted Text</h3>
+
                 </div>
 
                 {% if ocr_success %}
-                    <span class="status-success">✓ OCR Successful</span>
+
+                    <span class="status-success">
+                        ✓ OCR Successful
+                    </span>
+
                 {% else %}
-                    <span class="status-review">⚠ Review Required</span>
+
+                    <span class="status-review">
+                        ⚠ Review Required
+                    </span>
+
                 {% endif %}
+
             </div>
+
 
             {% if ocr_success and ocr_text %}
 
                 <div class="ocr-result">
+
                     <pre>{{ ocr_text }}</pre>
+
                 </div>
 
             {% else %}
 
                 <div class="ocr-empty">
-                    <div class="empty-icon">📄</div>
+
+                    <div class="empty-icon">
+                        📄
+                    </div>
+
                     <h4>No Text Extracted</h4>
+
                     <p>
-                        OCR could not extract readable text from this image.
-                        Please upload a clearer product image.
+                        OCR could not extract readable text
+                        from this image.
                     </p>
+
                 </div>
 
             {% endif %}
 
         </div>
 
-        <!-- Compliance Status -->
+
+        <!-- DECLARATIONS -->
+
+        <div class="content-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        DECLARATION EXTRACTION
+                    </span>
+
+                    <h3>📋 Detected Declarations</h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-grid">
+
+                <div class="info-item">
+
+                    <strong>Manufacturer</strong>
+
+                    {% if declarations.manufacturer %}
+                        <span>✓ {{ declarations.manufacturer }}</span>
+                    {% else %}
+                        <span>❌ Not Detected</span>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <strong>Net Quantity</strong>
+
+                    {% if declarations.net_quantity %}
+                        <span>✓ {{ declarations.net_quantity }}</span>
+                    {% else %}
+                        <span>❌ Not Detected</span>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <strong>MRP</strong>
+
+                    {% if declarations.mrp %}
+                        <span>✓ {{ declarations.mrp }}</span>
+                    {% else %}
+                        <span>❌ Not Detected</span>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <strong>Manufacturing Date</strong>
+
+                    {% if declarations.manufacturing_date %}
+                        <span>✓ {{ declarations.manufacturing_date }}</span>
+                    {% else %}
+                        <span>❌ Not Detected</span>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <strong>Consumer Care</strong>
+
+                    {% if declarations.consumer_care %}
+                        <span>✓ {{ declarations.consumer_care }}</span>
+                    {% else %}
+                        <span>❌ Not Detected</span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMPLIANCE SCORE -->
+
         <div class="content-card">
 
             <h3>⚖️ Compliance Assessment</h3>
@@ -102,24 +240,120 @@
             <div class="assessment-box">
 
                 <div class="score-circle">
-                    <span>--</span>
+
+                    <span>
+                        {{ compliance_result.score|default:"0" }}%
+                    </span>
+
                     <small>Score</small>
+
                 </div>
 
+
                 <div>
-                    <h4>Analysis Pending</h4>
+
+                    <h4>
+                        {{ compliance_result.status|default:"Analysis Pending" }}
+                    </h4>
+
                     <p>
-                        Mandatory declarations will be checked in the
-                        next compliance-analysis stage.
+                        {{ compliance_result.violation_count|default:"0" }}
+                        violation(s) detected during the compliance check.
                     </p>
+
                 </div>
 
             </div>
 
         </div>
 
-        <!-- Actions -->
+
+        <!-- VIOLATIONS -->
+
+        <div class="content-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        COMPLIANCE CHECK
+                    </span>
+
+                    <h3>🚨 Detected Violations</h3>
+
+                </div>
+
+            </div>
+
+
+            {% if compliance_result.violations %}
+
+                <div class="violations-list">
+
+                    {% for violation in compliance_result.violations %}
+
+                        <div class="violation-item">
+
+                            <div>
+
+                                <strong>
+                                    {{ violation.violation_type }}
+                                </strong>
+
+                                <p>
+                                    {{ violation.description }}
+                                </p>
+
+                                <small>
+                                    Declaration:
+                                    {{ violation.declaration }}
+                                </small>
+
+                            </div>
+
+                            <span>
+                                {{ violation.severity }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="ocr-empty">
+
+                    <div class="empty-icon">
+                        ✅
+                    </div>
+
+                    <h4>No Violations Detected</h4>
+
+                    <p>
+                        All currently configured declarations
+                        passed the compliance check.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+
         <div class="action-buttons">
+
+            <a
+                href="{% url 'scanner:upload' %}"
+                class="action-button"
+            >
+                🔄 Scan Another Product
+            </a>
 
             <a
                 href="{% url 'compliance:violations' %}"
@@ -133,13 +367,6 @@
                 class="action-button"
             >
                 📄 Generate Report
-            </a>
-
-            <a
-                href="{% url 'scanner:upload' %}"
-                class="action-button secondary"
-            >
-                🔄 Scan Another Product
             </a>
 
             <a

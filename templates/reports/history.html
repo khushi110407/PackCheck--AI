@@ -1,17 +1,177 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}
 Inspection History | PackCheck AI
 {% endblock %}
 
 
+{% block extra_css %}
+
+<style>
+
+    .history-page {
+        padding: 50px 0;
+    }
+
+    .history-header {
+        margin-bottom: 30px;
+    }
+
+    .history-header span {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+    }
+
+    .history-header h1 {
+        margin: 8px 0;
+        font-size: 34px;
+    }
+
+    .history-header p {
+        margin: 0;
+        color: #666;
+    }
+
+    .content-card {
+        background: white;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        text-align: left;
+        padding: 15px;
+        border-bottom: 2px solid #eee;
+        font-size: 14px;
+    }
+
+    .table td {
+        padding: 16px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background: #fafafa;
+    }
+
+    .product-name {
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .category {
+        color: #777;
+        font-size: 13px;
+    }
+
+    .score {
+        font-weight: 700;
+        font-size: 17px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-compliant {
+        background: #e8f7ee;
+        color: #168344;
+    }
+
+    .status-partial {
+        background: #fff4d6;
+        color: #a36b00;
+    }
+
+    .status-danger {
+        background: #fdeaea;
+        color: #c62828;
+    }
+
+    .violation-count {
+        font-size: 13px;
+        margin-top: 6px;
+        color: #666;
+    }
+
+    .view-btn {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        background: #111827;
+        color: white;
+    }
+
+    .view-btn:hover {
+        opacity: 0.85;
+    }
+
+    .empty-table {
+        text-align: center;
+        padding: 50px !important;
+        color: #777;
+    }
+
+    .empty-table .icon {
+        font-size: 35px;
+        margin-bottom: 10px;
+    }
+
+    .empty-table a {
+        display: inline-block;
+        margin-top: 15px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+
+        .history-page {
+            padding: 30px 10px;
+        }
+
+        .content-card {
+            padding: 15px;
+            overflow-x: auto;
+        }
+
+        .table {
+            min-width: 750px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
 {% block content %}
 
-<section class="page-section">
+<section class="history-page">
 
     <div class="container">
 
-        <div class="page-header">
+        <!-- HEADER -->
+
+        <div class="history-header">
 
             <span>
                 RECORDS
@@ -29,7 +189,12 @@ Inspection History | PackCheck AI
         </div>
 
 
+        <!-- HISTORY CARD -->
+
         <div class="content-card">
+
+
+            <!-- FILTER AREA -->
 
             <div class="row g-3 mb-4">
 
@@ -37,28 +202,34 @@ Inspection History | PackCheck AI
 
                     <input
                         type="text"
+                        id="searchInput"
                         class="form-control"
-                        placeholder="Search product...">
+                        placeholder="Search product..."
+                    >
 
                 </div>
 
+
                 <div class="col-md-4">
 
-                    <select class="form-select">
+                    <select
+                        id="statusFilter"
+                        class="form-select"
+                    >
 
-                        <option>
+                        <option value="all">
                             All Status
                         </option>
 
-                        <option>
+                        <option value="Compliant">
                             Compliant
                         </option>
 
-                        <option>
+                        <option value="Partially Compliant">
                             Review
                         </option>
 
-                        <option>
+                        <option value="Non-Compliant">
                             Violation
                         </option>
 
@@ -69,9 +240,14 @@ Inspection History | PackCheck AI
             </div>
 
 
+            <!-- TABLE -->
+
             <div class="table-responsive">
 
-                <table class="table">
+                <table
+                    class="table"
+                    id="historyTable"
+                >
 
                     <thead>
 
@@ -102,19 +278,171 @@ Inspection History | PackCheck AI
                     </thead>
 
 
-                    <tbody>
+                    <tbody id="historyBody">
 
-                        <tr>
 
-                            <td colspan="5"
-                                class="empty-table">
+                    {% if scans %}
 
-                                No inspection records
-                                available.
+
+                        {% for scan in scans %}
+
+                        <tr
+                            class="history-row"
+                            data-product="{{ scan.product_name|lower }}"
+                            data-status="{{ scan.status }}"
+                        >
+
+                            <!-- PRODUCT -->
+
+                            <td>
+
+                                <div class="product-name">
+
+                                    📦
+                                    {{ scan.product_name }}
+
+                                </div>
+
+                                <div class="category">
+
+                                    {{ scan.category }}
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- DATE -->
+
+                            <td>
+
+                                {{ scan.scanned_at|date:"d M Y" }}
+
+                                <br>
+
+                                <small>
+
+                                    {{ scan.scanned_at|date:"h:i A" }}
+
+                                </small>
+
+                            </td>
+
+
+                            <!-- SCORE -->
+
+                            <td>
+
+                                <span class="score">
+
+                                    {{ scan.score }}%
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+
+                                {% if scan.status == "Compliant" %}
+
+                                    <span class="status status-compliant">
+
+                                        ✓ Compliant
+
+                                    </span>
+
+
+                                {% elif scan.status == "Partially Compliant" %}
+
+                                    <span class="status status-partial">
+
+                                        ⚠ Review Required
+
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="status status-danger">
+
+                                        ✕ Non-Compliant
+
+                                    </span>
+
+                                {% endif %}
+
+
+                                <div class="violation-count">
+
+                                    {{ scan.violation_count }}
+                                    violation(s)
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- REPORT -->
+
+                            <td>
+
+                                <a
+                                    href="{% url 'scanner:result' scan.id %}"
+                                    class="view-btn"
+                                >
+                                    View Result
+                                </a>
 
                             </td>
 
                         </tr>
+
+                        {% endfor %}
+
+
+                    {% else %}
+
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="empty-table"
+                            >
+
+                                <div class="icon">
+                                    📦
+                                </div>
+
+                                <strong>
+                                    No inspection records available.
+                                </strong>
+
+                                <br>
+
+                                <span>
+                                    Start your first product scan.
+                                </span>
+
+                                <br>
+
+                                <a
+                                    href="{% url 'scanner:upload' %}"
+                                >
+                                    Scan Product →
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+
+                    {% endif %}
+
 
                     </tbody>
 
@@ -127,5 +455,75 @@ Inspection History | PackCheck AI
     </div>
 
 </section>
+
+
+<!-- SEARCH + FILTER -->
+
+<script>
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+    const rows =
+        document.querySelectorAll(".history-row");
+
+
+    function filterHistory() {
+
+        const searchValue =
+            searchInput.value.toLowerCase();
+
+        const statusValue =
+            statusFilter.value;
+
+
+        rows.forEach(function(row) {
+
+            const product =
+                row.dataset.product;
+
+            const status =
+                row.dataset.status;
+
+
+            const searchMatch =
+                product.includes(searchValue);
+
+
+            const statusMatch =
+                statusValue === "all" ||
+                status === statusValue;
+
+
+            if (searchMatch && statusMatch) {
+
+                row.style.display = "";
+
+            } else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        filterHistory
+    );
+
+
+    statusFilter.addEventListener(
+        "change",
+        filterHistory
+    );
+
+</script>
 
 {% endblock %}
