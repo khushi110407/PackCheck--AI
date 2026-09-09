@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 
 # ============================================================
@@ -12,11 +13,53 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # ============================================================
 
-SECRET_KEY = 'django-insecure-packcheck-ai-development-key'
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "django-insecure-packcheck-ai-development-key"
+)
 
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = []
+
+# ------------------------------------------------------------
+# Allowed Hosts
+# ------------------------------------------------------------
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+]
+
+# Render hostname automatically
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Optional custom hosts from environment variable
+extra_hosts = os.getenv("ALLOWED_HOSTS", "")
+
+if extra_hosts:
+    ALLOWED_HOSTS.extend(
+        host.strip()
+        for host in extra_hosts.split(",")
+        if host.strip()
+    )
+
+
+# ------------------------------------------------------------
+# CSRF Trusted Origins
+# ------------------------------------------------------------
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
+
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(
+        f"https://{RENDER_EXTERNAL_HOSTNAME}"
+    )
 
 
 # ============================================================
@@ -26,19 +69,19 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 
     # Django built-in apps
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 
     # PackCheck AI apps
-    'accounts',
-    'scanner',
-    'compliance',
-    'reports',
-    'dashboard',
+    "accounts",
+    "scanner",
+    "compliance",
+    "reports",
+    "dashboard",
 ]
 
 
@@ -48,19 +91,22 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
 
-    'django.middleware.security.SecurityMiddleware',
+    "django.middleware.security.SecurityMiddleware",
 
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # WhiteNoise for production static files
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
-    'django.middleware.common.CommonMiddleware',
+    "django.contrib.sessions.middleware.SessionMiddleware",
 
-    'django.middleware.csrf.CsrfViewMiddleware',
+    "django.middleware.common.CommonMiddleware",
 
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "django.middleware.csrf.CsrfViewMiddleware",
 
-    'django.contrib.messages.middleware.MessageMiddleware',
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
 
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.messages.middleware.MessageMiddleware",
+
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 
@@ -68,7 +114,7 @@ MIDDLEWARE = [
 # URL CONFIGURATION
 # ============================================================
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = "config.urls"
 
 
 # ============================================================
@@ -78,23 +124,23 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
 
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
 
-        'DIRS': [
-            BASE_DIR / 'templates',
+        "DIRS": [
+            BASE_DIR / "templates",
         ],
 
-        'APP_DIRS': True,
+        "APP_DIRS": True,
 
-        'OPTIONS': {
+        "OPTIONS": {
 
-            'context_processors': [
+            "context_processors": [
 
-                'django.template.context_processors.request',
+                "django.template.context_processors.request",
 
-                'django.contrib.auth.context_processors.auth',
+                "django.contrib.auth.context_processors.auth",
 
-                'django.contrib.messages.context_processors.messages',
+                "django.contrib.messages.context_processors.messages",
 
             ],
         },
@@ -106,20 +152,23 @@ TEMPLATES = [
 # WSGI
 # ============================================================
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # ============================================================
 # DATABASE
 # ============================================================
 
+# SQLite is kept for the SIH demo deployment.
+# Later, this can be changed to PostgreSQL.
+
 DATABASES = {
 
-    'default': {
+    "default": {
 
-        'ENGINE': 'django.db.backends.sqlite3',
+        "ENGINE": "django.db.backends.sqlite3",
 
-        'NAME': BASE_DIR / 'db.sqlite3',
+        "NAME": BASE_DIR / "db.sqlite3",
 
     }
 
@@ -133,23 +182,23 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
 
     {
-        'NAME':
-        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME":
+        "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
 
     {
-        'NAME':
-        'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME":
+        "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
 
     {
-        'NAME':
-        'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME":
+        "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
 
     {
-        'NAME':
-        'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME":
+        "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 
 ]
@@ -159,9 +208,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # ============================================================
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
@@ -172,13 +221,31 @@ USE_TZ = True
 # STATIC FILES
 # ============================================================
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
 
-    BASE_DIR / 'static',
+    BASE_DIR / "static",
 
 ]
+
+# Production static files directory
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+# WhiteNoise static file storage
+STORAGES = {
+
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+
+    "staticfiles": {
+        "BACKEND":
+        "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+
+}
 
 
 # ============================================================
@@ -186,13 +253,13 @@ STATICFILES_DIRS = [
 # Uploaded product images are stored here
 # ============================================================
 
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / "media"
 
 
 # ============================================================
 # DEFAULT PRIMARY KEY
 # ============================================================
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

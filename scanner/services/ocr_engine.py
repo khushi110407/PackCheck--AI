@@ -1,3 +1,5 @@
+import os
+import shutil
 import cv2
 import pytesseract
 import re
@@ -5,12 +7,63 @@ from difflib import SequenceMatcher
 
 
 # =========================================================
-# TESSERACT
+# TESSERACT CONFIGURATION
 # =========================================================
 
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
+def configure_tesseract():
+    """
+    Configure Tesseract OCR for both Windows and Linux/Render.
+
+    Priority:
+    1. TESSERACT_CMD environment variable
+    2. System-installed Tesseract
+    3. Windows default installation path
+    """
+
+    # -----------------------------------------------------
+    # 1. Environment variable
+    # -----------------------------------------------------
+
+    env_path = os.getenv("TESSERACT_CMD")
+
+    if env_path and os.path.exists(env_path):
+        pytesseract.pytesseract.tesseract_cmd = env_path
+        return env_path
+
+    # -----------------------------------------------------
+    # 2. System PATH
+    # -----------------------------------------------------
+
+    system_tesseract = shutil.which("tesseract")
+
+    if system_tesseract:
+        pytesseract.pytesseract.tesseract_cmd = system_tesseract
+        return system_tesseract
+
+    # -----------------------------------------------------
+    # 3. Windows default path
+    # -----------------------------------------------------
+
+    windows_paths = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+    ]
+
+    for path in windows_paths:
+
+        if os.path.exists(path):
+
+            pytesseract.pytesseract.tesseract_cmd = path
+            return path
+
+    # -----------------------------------------------------
+    # No Tesseract found
+    # -----------------------------------------------------
+
+    return None
+
+
+TESSERACT_PATH = configure_tesseract()
 
 
 # =========================================================
@@ -85,7 +138,7 @@ def preprocess_image(image):
     Mild preprocessing.
 
     Aggressive thresholding is avoided because it was
-    producing garbage OCR in the user's product image.
+    producing garbage OCR in the product image.
     """
 
     image = resize_for_ocr(image)
@@ -165,6 +218,7 @@ def normalize_text(text):
         return ""
 
     replacements = {
+
         "M.R.P": "MRP",
         "M.R.P.": "MRP",
         "M R P": "MRP",
@@ -189,6 +243,7 @@ def normalize_text(text):
     }
 
     for old, new in replacements.items():
+
         text = text.replace(
             old,
             new
@@ -204,11 +259,6 @@ def normalize_text(text):
 def keyword_similarity(word, keyword):
     """
     Fuzzy match useful for OCR errors.
-
-    Example:
-        PKD -> PKD
-        PXD -> PKD
-        MRP -> MRP
     """
 
     word = word.lower().strip()
@@ -241,11 +291,14 @@ def average_confidence(data):
     ):
 
         try:
+
             value = float(value)
+
         except (
             ValueError,
             TypeError
         ):
+
             continue
 
         if value >= 0:
@@ -427,7 +480,8 @@ def find_best_orientation(image):
 
 def find_target_regions(image):
     """
-    Locate declaration keywords using Tesseract bounding boxes.
+    Locate declaration keywords using Tesseract
+    bounding boxes.
 
     Returns crop coordinates around useful keywords.
     """
@@ -447,7 +501,6 @@ def find_target_regions(image):
 
     except Exception:
         return []
-
 
     height, width = processed.shape[:2]
 
@@ -470,7 +523,6 @@ def find_target_regions(image):
         if w <= 0 or h <= 0:
             continue
 
-
         # -----------------------------------------
         # Find closest target keyword
         # -----------------------------------------
@@ -480,8 +532,6 @@ def find_target_regions(image):
 
         for keyword in TARGET_KEYWORDS:
 
-            # Compare individual OCR word
-            # with short keywords.
             similarity = keyword_similarity(
                 word,
                 keyword
@@ -492,21 +542,16 @@ def find_target_regions(image):
                 matched_score = similarity
                 matched_keyword = keyword
 
-
         # Exact / strong fuzzy match
         if matched_score < 0.70:
             continue
-
 
         # -----------------------------------------
         # Large surrounding crop
         # -----------------------------------------
 
-        # Horizontal padding is intentionally large
-        # because values often appear beside keywords.
         pad_x = 450
 
-        # Vertical padding captures nearby date/value.
         pad_y = 120
 
         x1 = max(
@@ -539,8 +584,8 @@ def find_target_regions(image):
             )
         )
 
-
     # Remove duplicate/overlapping regions
+
     unique_regions = []
 
     for region in regions:
@@ -553,20 +598,16 @@ def find_target_regions(image):
 
             _, ox1, oy1, ox2, oy2 = old
 
-            overlap_x = (
-                max(
-                    0,
-                    min(x2, ox2)
-                    - max(x1, ox1)
-                )
+            overlap_x = max(
+                0,
+                min(x2, ox2)
+                - max(x1, ox1)
             )
 
-            overlap_y = (
-                max(
-                    0,
-                    min(y2, oy2)
-                    - max(y1, oy1)
-                )
+            overlap_y = max(
+                0,
+                min(y2, oy2)
+                - max(y1, oy1)
             )
 
             overlap_area = (
@@ -627,6 +668,7 @@ def ocr_region(
     )
 
     # Slightly improve local contrast
+
     crop = cv2.normalize(
         crop,
         None,
@@ -657,6 +699,7 @@ def ocr_region(
             )
 
             if text:
+
                 results.append(
                     text
                 )
@@ -668,6 +711,7 @@ def ocr_region(
         return ""
 
     # Prefer longest useful result
+
     return max(
         results,
         key=len
@@ -691,12 +735,7 @@ def targeted_declaration_ocr(image):
     if not regions:
         return ""
 
-
     results = []
-
-    processed = preprocess_image(
-        image
-    )
 
     for (
         keyword,
@@ -725,7 +764,6 @@ def targeted_declaration_ocr(image):
 
         except Exception:
             continue
-
 
     if not results:
         return ""
@@ -767,8 +805,8 @@ def merge_ocr_text(
     if not full_text:
         return targeted_text
 
-
     # Avoid exact duplicate blocks
+
     if targeted_text in full_text:
         return full_text
 
@@ -810,6 +848,16 @@ def extract_text(image_path):
     try:
 
         # -----------------------------------------
+        # Check Tesseract
+        # -----------------------------------------
+
+        if not TESSERACT_PATH:
+
+            raise RuntimeError(
+                "Tesseract OCR is not installed or could not be found."
+            )
+
+        # -----------------------------------------
         # Read image
         # -----------------------------------------
 
@@ -823,7 +871,6 @@ def extract_text(image_path):
                 "Unable to read image"
             )
 
-
         # -----------------------------------------
         # Find best orientation
         # -----------------------------------------
@@ -836,7 +883,6 @@ def extract_text(image_path):
             original
         )
 
-
         # -----------------------------------------
         # Targeted OCR
         # -----------------------------------------
@@ -847,7 +893,6 @@ def extract_text(image_path):
             )
         )
 
-
         # -----------------------------------------
         # Merge
         # -----------------------------------------
@@ -857,7 +902,6 @@ def extract_text(image_path):
             targeted_text
         )
 
-
         # -----------------------------------------
         # Final clean
         # -----------------------------------------
@@ -866,16 +910,13 @@ def extract_text(image_path):
             final_text
         )
 
-
         if not final_text:
 
             return (
                 "No readable text detected."
             )
 
-
         return final_text
-
 
     except Exception as e:
 
